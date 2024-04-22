@@ -67,18 +67,25 @@ const config = createConfig({
 });
 const client = new QueryClient();
 
+
+if (typeof window !== "undefined") { 
+  window.addEventListener("message", d => {
+    console.log("Harness Message Received", d.data)
+  })
+}
+
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <NextUIProvider>
-    <WagmiProvider config={config}>
-      <QueryClientProvider client={client}>
-        <RainbowKitProvider theme={darkTheme()}>
-            <main className="dark text-foreground bg-background">
-              <Component {...pageProps} />
-            </main>
-        </RainbowKitProvider>
-      </QueryClientProvider>
-    </WagmiProvider>
+      <WagmiProvider config={config}>
+        <QueryClientProvider client={client}>
+          <RainbowKitProvider theme={darkTheme()}>
+              <main className="dark text-foreground bg-background">
+                <Component {...pageProps} />
+              </main>
+          </RainbowKitProvider>
+        </QueryClientProvider>
+      </WagmiProvider>
     </NextUIProvider>
   );
 }
