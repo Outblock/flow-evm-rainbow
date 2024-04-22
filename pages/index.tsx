@@ -2,15 +2,12 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import styles from '../styles/Home.module.css';
-import {
-  rainbowWallet,
-  walletConnectWallet,
-  trustWallet,
-} from '@rainbow-me/rainbowkit/wallets';
 import { Chain } from '@rainbow-me/rainbowkit';
 import { SendTransaction } from '../component/sendTx';
+import { SignMessage } from '../component/signMsg';
 
 const Home: NextPage = () => {
+
   return (
     <div className={styles.container}>
       <Head>
@@ -31,6 +28,7 @@ const Home: NextPage = () => {
         <ConnectButton showBalance={true} />
 
         <SendTransaction/>
+        <SignMessage/>
 
         {/* <p className={styles.description}>
           Get started by editing{' '}
