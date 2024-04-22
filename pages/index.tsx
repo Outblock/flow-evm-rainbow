@@ -22,7 +22,7 @@ const Home: NextPage = () => {
       </Head>
 
       <main className={styles.main}>
-        <ConnectButton initialChain={646} />
+        <ConnectButton showBalance={true} />
 
         <h1 className={styles.title}>
           Flow EVM Demo
