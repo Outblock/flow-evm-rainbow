@@ -8,6 +8,7 @@ import {
   trustWallet,
 } from '@rainbow-me/rainbowkit/wallets';
 import { Chain } from '@rainbow-me/rainbowkit';
+import { SendTransaction } from '../component/sendTx';
 
 const Home: NextPage = () => {
   return (
@@ -22,11 +23,14 @@ const Home: NextPage = () => {
       </Head>
 
       <main className={styles.main}>
-        <ConnectButton showBalance={true} />
 
-        <h1 className={styles.title}>
+      <h1 className={styles.title}>
           Flow EVM Demo
         </h1>
+
+        <ConnectButton showBalance={true} />
+
+        <SendTransaction/>
 
         {/* <p className={styles.description}>
           Get started by editing{' '}

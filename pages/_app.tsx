@@ -12,13 +12,14 @@ import {
   polygon,
   sepolia,
 } from 'wagmi/chains';
-import { getDefaultConfig, RainbowKitProvider, connectorsForWallets } from '@rainbow-me/rainbowkit';
+import { getDefaultConfig, RainbowKitProvider, connectorsForWallets, darkTheme } from '@rainbow-me/rainbowkit';
 import {
   rainbowWallet,
   trustWallet,
   walletConnectWallet,
   injectedWallet
 } from '@rainbow-me/rainbowkit/wallets';
+import {NextUIProvider} from "@nextui-org/react";
 // import { publicProvider } from "wagmi/providers/public";
 
 const projectId = 'c284f5a3346da817aeca9a4e6bc7f935'
@@ -68,13 +69,17 @@ const client = new QueryClient();
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
+    <NextUIProvider>
     <WagmiProvider config={config}>
       <QueryClientProvider client={client}>
-        <RainbowKitProvider>
-          <Component {...pageProps} />
+        <RainbowKitProvider theme={darkTheme()}>
+            <main className="dark text-foreground bg-background">
+              <Component {...pageProps} />
+            </main>
         </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
+    </NextUIProvider>
   );
 }
 
