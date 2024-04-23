@@ -30,11 +30,12 @@ export function SendTransaction() {
 
 
   const [addr, setAddr] = React.useState('0x0000000000000000000000029eea64fdfdfdfbf2')
+  const [amount, setAmount] = React.useState('0.1')
 
   return (
     <form onSubmit={submit}>
       <Input name="address" placeholder="0xA0Cf…251e" required value={addr} onValueChange={setAddr} />
-      <Input name="value" placeholder="0.05" required value={"0.1"} />
+      <Input name="value" placeholder="0.05" required value={amount} onValueChange={setAmount}/>
       <Button 
         disabled={isPending} 
         type="submit"
