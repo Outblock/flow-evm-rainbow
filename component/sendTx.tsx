@@ -28,9 +28,12 @@ export function SendTransaction() {
       hash, 
     }) 
 
+
+  const [addr, setAddr] = React.useState('0x0000000000000000000000029eea64fdfdfdfbf2')
+
   return (
     <form onSubmit={submit}>
-      <Input name="address" placeholder="0xA0Cf…251e" required value={"0x95222290dd7278aa3ddd389cc1e1d165cc4bafe5"} />
+      <Input name="address" placeholder="0xA0Cf…251e" required value={addr} onValueChange={setAddr} />
       <Input name="value" placeholder="0.05" required value={"0.1"} />
       <Button 
         disabled={isPending} 
