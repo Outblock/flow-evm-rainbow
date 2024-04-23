@@ -29,7 +29,7 @@ export function SendTransaction() {
     }) 
 
 
-  const [addr, setAddr] = React.useState('0x0000000000000000000000029eea64fdfdfdfbf2')
+  const [addr, setAddr] = React.useState('0x2b7E32BB7F9BA35ea1a0D8181c8D163B3B0D5ea2')
   const [amount, setAmount] = React.useState('0.1')
 
   return (
