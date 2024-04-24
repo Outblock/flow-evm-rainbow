@@ -1,13 +1,13 @@
-import { ConnectButton } from '@rainbow-me/rainbowkit';
-import type { NextPage } from 'next';
-import Head from 'next/head';
-import styles from '../styles/Home.module.css';
-import { Chain } from '@rainbow-me/rainbowkit';
-import { SendTransaction } from '../component/sendTx';
-import { SignMessage } from '../component/signMsg';
+import { ConnectButton } from '@rainbow-me/rainbowkit'
+import type { NextPage } from 'next'
+import Head from 'next/head'
+import styles from '../styles/Home.module.css'
+import { Chain } from '@rainbow-me/rainbowkit'
+import { SendTransaction } from '../component/sendTx'
+import { SignMessage } from '../component/signMsg'
+import { Facuet } from '../component/facuet'
 
 const Home: NextPage = () => {
-
   return (
     <div className={styles.container}>
       <Head>
@@ -20,16 +20,13 @@ const Home: NextPage = () => {
       </Head>
 
       <main className={styles.main}>
-
-      <h1 className={styles.title}>
-          Flow EVM Demo
-        </h1>
+        <h1 className={styles.title}>Flow EVM Demo</h1>
 
         <ConnectButton showBalance={true} />
 
-        <SendTransaction/>
-        <SignMessage/>
-
+        <SendTransaction />
+        <SignMessage />
+        <Facuet />
         {/* <p className={styles.description}>
           Get started by editing{' '}
           <code className={styles.code}>pages/index.tsx</code>
@@ -85,7 +82,7 @@ const Home: NextPage = () => {
         </a>
       </footer>
     </div>
-  );
-};
+  )
+}
 
-export default Home;
+export default Home
