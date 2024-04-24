@@ -67,7 +67,7 @@ export function Contract() {
       address: addr,
       functionName: "retrieve",
     });
-    setResult(result);
+    setResult(String(result));
     console.log("useReadContract ==>", result);
   };
 
@@ -79,7 +79,7 @@ export function Contract() {
     <div>
       <Input name="store" required value={msg} onValueChange={setMsg} />
       <Button onClick={() => store2(msg)}>store</Button>
-      <p>{String(result)}</p>
+      <p>{result}</p>
     </div>
   );
 }
