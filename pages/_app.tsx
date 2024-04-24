@@ -1,7 +1,7 @@
 import '../styles/globals.css';
 import '@rainbow-me/rainbowkit/styles.css';
 import type { AppProps } from 'next/app';
-
+import { config } from '../component/config'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { WagmiProvider, createConfig, http } from 'wagmi';
 import {
@@ -13,29 +13,8 @@ import {
   sepolia,
 } from 'wagmi/chains';
 import { getDefaultConfig, RainbowKitProvider, connectorsForWallets, darkTheme } from '@rainbow-me/rainbowkit';
-import {
-  rainbowWallet,
-  trustWallet,
-  walletConnectWallet,
-  injectedWallet
-} from '@rainbow-me/rainbowkit/wallets';
 import {NextUIProvider} from "@nextui-org/react";
 // import { publicProvider } from "wagmi/providers/public";
-
-const projectId = 'c284f5a3346da817aeca9a4e6bc7f935'
-
-const connectors = connectorsForWallets(
-  [
-    {
-      groupName: 'Recommended',
-      wallets: [trustWallet, walletConnectWallet, injectedWallet, rainbowWallet],
-    },
-  ],
-  {
-    appName: 'My RainbowKit App',
-    projectId: 'c284f5a3346da817aeca9a4e6bc7f935',
-  }
-);
 
 const flowPreviewnet = {
   id: 646,
@@ -56,17 +35,7 @@ const flowPreviewnet = {
   contracts: {},
 }
 
-const config = createConfig({
-  connectors: connectors,
-  chains: [flowPreviewnet],
-  transports: {
-    [mainnet.id]: http(),
-  },
-  multiInjectedProviderDiscovery: false,
-  ssr: true,
-});
 const client = new QueryClient();
-
 
 if (typeof window !== "undefined") { 
   window.addEventListener("message", d => {

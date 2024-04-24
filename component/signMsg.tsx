@@ -31,7 +31,7 @@ export function SignMessage() {
     console.log('isVaild ==>', isVaild)
   }
 
-  const fetchSCW = async () => {
+  const fetchSCW = async (address: `0x${string}`) => {
     if (!address) {
       return;
     }
@@ -42,7 +42,9 @@ export function SignMessage() {
   } 
 
   useEffect(() => {
-    fetchSCW()
+    if (address) {
+      fetchSCW(address)
+    }
   }, [address])
 
   return (
