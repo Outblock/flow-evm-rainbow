@@ -40,6 +40,7 @@ export function Contract() {
   const { writeContractAsync } = useWriteContract();
   const [msg, setMsg] = React.useState("999");
   const [result, setResult] = React.useState("");
+  const [txId, setTxId] = React.useState("");
 
   const store = async (msg: String) => {
     const result = await writeContractAsync({
@@ -59,6 +60,7 @@ export function Contract() {
       args: [msg],
     });
     console.log("writeContract ==>", result, msg);
+    setTxId(result)
   };
 
   const read = async () => {
@@ -80,6 +82,7 @@ export function Contract() {
       <Input name="store" required value={msg} onValueChange={setMsg} />
       <Button onClick={() => store2(msg)}>store</Button>
       <p>{result}</p>
+      {txId !== '' && <p>{`txId: ${txId}`}</p>}
     </div>
   );
 }
