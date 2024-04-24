@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ethereumjs/common": "^4.3.0",
+    "@ethereumjs/tx": "^5.3.0",
     "@nextui-org/react": "^2.3.5",
     "@rainbow-me/rainbowkit": "^2.0.5",
     "@tanstack/react-query": "^5.28.4",
@@ -18,7 +20,8 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "viem": "^2.9.25",
-    "wagmi": "^2.5.20"
+    "wagmi": "^2.5.20",
+    "web3": "^4.8.0"
   },
   "devDependencies": {
     "@types/node": "^18.19.3",

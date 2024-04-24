@@ -1,0 +1,38 @@
+{
+    "previewnet": {
+        "name": "Flow EVM Token List",
+        "logoURI": "",
+        "keywords": [
+            "previewnet"
+        ],
+        "tags": {
+            "stablecoin": {
+                "name": "Stablecoin",
+                "description": "Tokens that are fixed to an external asset, e.g. the US dollar"
+            }
+        },
+        "timestamp": "",
+        "tokens": [
+            {
+                "chainId": 646,
+                "address": "0xF852E525547561EBCadca0F48B818fAa2C9e1E46",
+                "symbol": "BT",
+                "name": "BridgedNFT",
+                "decimals": 18,
+                "logoURI": "",
+                "tags": []
+            },
+            {
+                "chainId": 646,
+                "address": "0xD89622d03DF97276569004d127943de4a72fCE8F",
+                "symbol": "MFT",
+                "name": "MyFT",
+                "decimals": 18,
+                "logoURI": "",
+                "tags": []
+            }
+        ]
+    },
+    "testnet": [],
+    "mainnet": []
+}
