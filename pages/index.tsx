@@ -6,9 +6,9 @@ import { Chain } from '@rainbow-me/rainbowkit';
 import { SendTransaction } from '../component/sendTx';
 import { SignMessage } from '../component/signMsg';
 import { Contract } from '../component/contract';
+import { Facuet } from '../component/facuet'
 
 const Home: NextPage = () => {
-
   return (
     <div className={styles.container}>
       <Head>
@@ -28,6 +28,7 @@ const Home: NextPage = () => {
         <SendTransaction/>
         <SignMessage/>
         <Contract/>
+        <Facuet />
       </main>
 
       <footer className={styles.footer}>
@@ -36,7 +37,7 @@ const Home: NextPage = () => {
         </a>
       </footer>
     </div>
-  );
-};
+  )
+}
 
-export default Home;
+export default Home
