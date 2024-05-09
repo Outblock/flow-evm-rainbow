@@ -20,7 +20,7 @@ async function handler(req, res) {
     // const privKey = Buffer.from(pk, 'hex')
     // var transaction = new Transaction(rawTransaction, { chain: 'rinkeby' });
     // const amount = provider.utils.toHex("1")
-    const amount = provider.utils.toHex('1000000000000000000')
+    // const amount = provider.utils.toHex('')
 
     const rawTransaction = {
       from: sender,
@@ -28,7 +28,7 @@ async function handler(req, res) {
       gasLimit: provider.utils.toHex(410000),
       to: '0xD89622d03DF97276569004d127943de4a72fCE8F',
       value: '0x0',
-      data: ftContract.methods.mint(address, amount).encodeABI(),
+      data: ftContract.methods.mint(address, 2000000000000000000).encodeABI(),
       nonce: provider.utils.toHex(count),
     }
 
