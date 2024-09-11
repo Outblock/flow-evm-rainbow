@@ -23,20 +23,20 @@ const connectors = connectorsForWallets(
   }
 );
 
-const flowPreviewnet = {
-    id: 646,
-    name: 'Flow Previewnet',
+const flowMainnet = {
+    id: 747,
+    name: 'Flow Mainnet',
     nativeCurrency: { name: 'Flow', symbol: 'FLOW', decimals: 18 },
     rpcUrls: {
       default: {
-        http: ['https://previewnet.evm.nodes.onflow.org'],
+        http: ['https://mainnet.evm.nodes.onflow.org'],
       },
     },
     blockExplorers: {
       default: {
         name: 'FlowDiver',
-        url: 'https://previewnet.flowdiver.io',
-        apiUrl: 'https://previewnet.flowdiver.io/api',
+        url: 'https://eth.flowscan.io/',
+        apiUrl: 'https://eth.flowscan.io/api',
       },
     },
     contracts: {},
@@ -44,9 +44,9 @@ const flowPreviewnet = {
 
 export const config = createConfig({
     connectors: connectors,
-  chains: [flowPreviewnet],
+  chains: [flowMainnet],
   transports: {
-    [flowPreviewnet.id]: http(),
+    [flowMainnet.id]: http(),
   },
   ssr: true
 })
