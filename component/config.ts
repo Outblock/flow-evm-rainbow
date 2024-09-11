@@ -23,7 +23,7 @@ const connectors = connectorsForWallets(
   }
 );
 
-const flow = {
+const flowRPC = {
     id: 545,
     name: 'Flow testnet',
     nativeCurrency: { name: 'Flow', symbol: 'FLOW', decimals: 18 },
@@ -44,9 +44,9 @@ const flow = {
 
 export const config = createConfig({
     connectors: connectors,
-  chains: [flow],
+  chains: [flowRPC],
   transports: {
-    [flow.id]: http(),
+    [flowRPC.id]: http(),
   },
   ssr: true
 })
