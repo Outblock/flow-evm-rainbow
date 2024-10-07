@@ -19,18 +19,16 @@ export function SignTypeData() {
     ],
   }
 
+  const domain = {
+    name: 'Ether Mail',
+    version: '1',
+    chainId: 747,
+    verifyingContract: '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC',
+  } as const
+
   const message = {
-    types: {
-      Person: [
-        { name: 'name', type: 'string' },
-        { name: 'wallet', type: 'address' },
-      ],
-      Mail: [
-        { name: 'from', type: 'Person' },
-        { name: 'to', type: 'Person' },
-        { name: 'contents', type: 'string' },
-      ],
-    },
+    types,
+    domain,
     primaryType: "Mail",
     message: {
       from: {
@@ -44,13 +42,6 @@ export function SignTypeData() {
       contents: 'Hello, Bob!',
     }
   }
-
-  const domain = {
-    name: 'Ether Mail',
-    version: '1',
-    chainId: 747,
-    verifyingContract: '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC',
-  } as const
 
   const [ isVaild, setVaild ] = useState<boolean>(false);
   // const [ sig, setSig ] = useState<`0x${string}`>('0x');
