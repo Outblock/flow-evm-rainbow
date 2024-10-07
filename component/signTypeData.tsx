@@ -32,10 +32,6 @@ export function SignTypeData() {
     }
   }
 
-  const { address } = useAccount()
-
-  const [ isVaild, setVaild ] = useState<boolean>(false);
-  // const [ sig, setSig ] = useState<`0x${string}`>('0x');
   const { signTypedDataAsync } = useSignTypedData()
 
   const signMsg = async () => {
@@ -56,7 +52,6 @@ export function SignTypeData() {
       <Button onClick={signMsg} >
         Sign Typed Data
       </Button>
-      <div>{`isValidSignature: ${isVaild}` }</div>
       </div>
   );
 }

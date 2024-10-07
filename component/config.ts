@@ -24,11 +24,11 @@ const connectors = connectorsForWallets(
 );
 
 export const config = createConfig({
-    connectors: connectors,
-  chains: [flowMainnet, flowTestnet],
+  connectors: connectors,
+  chains: [flowMainnet],
   transports: {
     [flowMainnet.id]: http(),
-    [flowTestnet.id]: http(),
+    // [flowTestnet.id]: http(),
   },
   ssr: true
 })
