@@ -25,12 +25,25 @@ const Home: NextPage = () => {
         <h1 className={styles.title}>
           Flow EVM Demo
         </h1>
-        <ConnectButton showBalance={true} />
-        <SendTransaction/>
-        <SignMessage/>
-        <SignTypeData/>
-        <Contract/>
-        <Facuet />
+        <ConnectButton showBalance={true} /> 
+        <div className={styles.element}>
+          <div className={styles.elementTitle}>Send FLOW Transaction</div>
+          <SendTransaction/>
+        </div>
+        <div className={styles.element}>
+          <div className={styles.elementTitle}>Sign Message</div>
+          <SignMessage/>
+        </div>
+        <div className={styles.element}>
+        <div className={styles.elementTitle}>Sign Typed Data</div>
+          <SignTypeData/>
+        </div>
+        <div className={styles.element}>
+          <Contract/>
+        </div>
+        <div className={styles.element}>
+          <Facuet />
+        </div>
       </main>
     </div>
   )
