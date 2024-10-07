@@ -1,5 +1,5 @@
 import { http, createConfig } from '@wagmi/core'
-import { mainnet, sepolia } from '@wagmi/core/chains'
+import { mainnet, sepolia, flowMainnet, flowTestnet } from '@wagmi/core/chains'
 import { connectorsForWallets } from '@rainbow-me/rainbowkit';
 import {
     rainbowWallet,
@@ -23,30 +23,12 @@ const connectors = connectorsForWallets(
   }
 );
 
-const flowRPCT = {
-    id: 545,
-    name: 'Flow testnet',
-    nativeCurrency: { name: 'Flow', symbol: 'FLOW', decimals: 18 },
-    rpcUrls: {
-      default: {
-        http: ['https://testnet.evm.nodes.onflow.org'],
-      },
-    },
-    blockExplorers: {
-      default: {
-        name: 'FlowDiver',
-        url: 'https://evm-testnet.flowscan.io',
-        apiUrl: 'https://evm-testnet.flowscan.io/api',
-      },
-    },
-    contracts: {},
-  }
-
 export const config = createConfig({
     connectors: connectors,
-  chains: [flowRPCT],
+  chains: [flowMainnet, flowTestnet],
   transports: {
-    [flowRPCT.id]: http(),
+    [flowMainnet.id]: http(),
+    [flowTestnet.id]: http(),
   },
   ssr: true
 })
