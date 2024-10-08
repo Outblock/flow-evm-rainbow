@@ -44,7 +44,6 @@ export function SignTypeData() {
   }
 
   const [ isVaild, setVaild ] = useState<boolean>(false);
-  // const [ sig, setSig ] = useState<`0x${string}`>('0x');
   const { signTypedDataAsync } = useSignTypedData({config})
 
   const { address } = useAccount()
@@ -54,24 +53,11 @@ export function SignTypeData() {
     const result = await signTypedDataAsync(message)
 
     const isVaild = await verifyTypedData(config, {
-      domain,
-      types,
-      message: {
-        from: {
-          name: 'Cow',
-          wallet: '0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826',
-        },
-        to: {
-          name: 'Bob',
-          wallet: '0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB',
-        },
-        contents: 'Hello, Bob!',
-      },
-      primaryType: 'Mail',
+      ...message,
       address: address as `0x${string}`,
       signature: result
     })
-    // setVaild(isVaild);
+    setVaild(isVaild);
     console.log('result ==>', result)
     console.log('isVaild ==>', isVaild)
   }
