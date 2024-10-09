@@ -27,10 +27,6 @@ export function SignTypeData() {
   } as const
 
   const message = {
-    types,
-    domain,
-    primaryType: "Mail",
-    message: {
       from: {
         name: 'Cow',
         wallet: '0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826',
@@ -40,7 +36,13 @@ export function SignTypeData() {
         wallet: '0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB',
       },
       contents: 'Hello, Bob!',
-    }
+  }
+
+  const typedData = {
+    types,
+    domain,
+    primaryType: "Mail",
+    message
   }
 
   const [ isVaild, setVaild ] = useState<boolean>(false);
@@ -50,10 +52,9 @@ export function SignTypeData() {
 
   const signMsg = async () => {
     //  @ts-ignore: Unreachable code error
-    const result = await signTypedDataAsync(message)
-
+    const result = await signTypedDataAsync(typedData)
     const isVaild = await verifyTypedData(config, {
-      ...message,
+      ...typedData,
       address: address as `0x${string}`,
       signature: result
     })

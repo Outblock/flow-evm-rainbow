@@ -8,6 +8,7 @@ import { SignMessage } from '../component/signMsg';
 import { Contract } from '../component/contract';
 import { Facuet } from '../component/facuet'
 import { SignTypeData } from '../component/signTypeData';
+import { SignTypeData2 } from '../component/signTypeData2';
 
 const Home: NextPage = () => {
   return (
@@ -37,6 +38,7 @@ const Home: NextPage = () => {
         <div className={styles.element}>
         <div className={styles.elementTitle}>Sign Typed Data</div>
           <SignTypeData/>
+          <SignTypeData2/>
         </div>
         <div className={styles.element}>
           <Contract/>
