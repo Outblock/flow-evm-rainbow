@@ -9,6 +9,7 @@ import { Contract } from '../component/contract';
 import { Facuet } from '../component/facuet'
 import { SignTypeData } from '../component/signTypeData';
 import { SignTypeData2 } from '../component/signTypeData2';
+import { WatchAsset } from '../component/watchAsset'
 
 const Home: NextPage = () => {
   return (
@@ -41,11 +42,15 @@ const Home: NextPage = () => {
           <SignTypeData2/>
         </div>
         <div className={styles.element}>
+          <div className={styles.elementTitle}>Watch Assets</div>
+          <WatchAsset/>
+        </div>
+        {/* <div className={styles.element}>
           <Contract/>
-        </div>
-        <div className={styles.element}>
+        </div> */}
+        {/* <div className={styles.element}>
           <Facuet />
-        </div>
+        </div> */}
       </main>
     </div>
   )
