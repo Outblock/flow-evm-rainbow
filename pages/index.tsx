@@ -1,15 +1,16 @@
-import { ConnectButton } from '@rainbow-me/rainbowkit';
-import type { NextPage } from 'next';
-import Head from 'next/head';
-import styles from '../styles/Home.module.css';
-import { Chain } from '@rainbow-me/rainbowkit';
-import { SendTransaction } from '../component/sendTx';
-import { SignMessage } from '../component/signMsg';
-import { Contract } from '../component/contract';
+import { ConnectButton } from '@rainbow-me/rainbowkit'
+import type { NextPage } from 'next'
+import Head from 'next/head'
+import styles from '../styles/Home.module.css'
+import { Chain } from '@rainbow-me/rainbowkit'
+import { SendTransaction } from '../component/sendTx'
+import { SignMessage } from '../component/signMsg'
+import { Contract } from '../component/contract'
 import { Facuet } from '../component/facuet'
-import { SignTypeData } from '../component/signTypeData';
-import { SignTypeData2 } from '../component/signTypeData2';
+import { SignTypeData } from '../component/signTypeData'
+import { SignTypeData2 } from '../component/signTypeData2'
 import { WatchAsset } from '../component/watchAsset'
+import { DecodeData } from '../component/decodedData'
 
 const Home: NextPage = () => {
   return (
@@ -24,26 +25,28 @@ const Home: NextPage = () => {
       </Head>
 
       <main className={styles.main}>
-        <h1 className={styles.title}>
-          Flow EVM Demo
-        </h1>
-        <ConnectButton showBalance={true} /> 
+        <h1 className={styles.title}>Flow EVM Demo</h1>
+        <ConnectButton showBalance={true} />
         <div className={styles.element}>
           <div className={styles.elementTitle}>Send FLOW Transaction</div>
-          <SendTransaction/>
+          <SendTransaction />
         </div>
         <div className={styles.element}>
           <div className={styles.elementTitle}>Sign Message</div>
-          <SignMessage/>
+          <SignMessage />
         </div>
         <div className={styles.element}>
-        <div className={styles.elementTitle}>Sign Typed Data</div>
-          <SignTypeData/>
-          <SignTypeData2/>
+          <div className={styles.elementTitle}>Sign Typed Data</div>
+          <SignTypeData />
+          <SignTypeData2 />
         </div>
         <div className={styles.element}>
           <div className={styles.elementTitle}>Watch Assets</div>
-          <WatchAsset/>
+          <WatchAsset />
+        </div>
+        <div className={styles.element}>
+          <div className={styles.elementTitle}>Decode Data</div>
+          <DecodeData />
         </div>
         {/* <div className={styles.element}>
           <Contract/>
