@@ -1,5 +1,7 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import type { NextPage } from 'next'
+import dynamic from 'next/dynamic'
+
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 import { Chain } from '@rainbow-me/rainbowkit'
@@ -44,7 +46,7 @@ const Home: NextPage = () => {
           <div className={styles.elementTitle}>Watch Assets</div>
           <WatchAsset />
         </div>
-        <div className={styles.element}>
+        <div>
           <div className={styles.elementTitle}>Decode Data</div>
           <DecodeData />
         </div>
