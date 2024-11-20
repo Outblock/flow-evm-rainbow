@@ -49,7 +49,7 @@ export function DecodeData() {
         disabled
       /> */}
 
-      <ReactJson indentWidth={2} src={decoded} style={{ with: '100%˝' }} />
+      <ReactJson indentWidth={2} src={decoded} style={{ width: '100%˝' }} />
     </div>
   )
 }
