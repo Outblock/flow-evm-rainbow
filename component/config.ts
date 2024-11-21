@@ -35,12 +35,12 @@ const flowWallet = ({ projectId }: MyWalletOptions): Wallet => ({
       learnMoreUrl: 'https://wallet.flow.com',
       steps: [
         {
-          description: 'We recommend putting My Wallet on your home screen for faster access to your wallet.',
+          description: 'We recommend putting Flow Wallet on your home screen for faster access to your wallet.',
           step: 'install',
           title: 'Open the Flow Wallet app',
         },
         {
-          description: 'After you scan, a connection prompt will appear for you to connect your wallet.',
+          description: 'You can find the scan button on home page, a connection prompt will appear for you to connect your wallet.',
           step: 'scan',
           title: 'Tap the scan button',
         },
@@ -53,9 +53,9 @@ const flowWallet = ({ projectId }: MyWalletOptions): Wallet => ({
       steps: [
         {
           description:
-            'We recommend pinning My Wallet to your taskbar for quicker access to your wallet.',
+            'We recommend pinning Flow Wallet to your taskbar for quicker access to your wallet.',
           step: 'install',
-          title: 'Install the My Wallet extension',
+          title: 'Install the Flow Wallet extension',
         },
         {
           description:
