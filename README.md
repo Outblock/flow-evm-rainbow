@@ -1,29 +1,64 @@
-This is a [RainbowKit](https://rainbowkit.com) + [wagmi](https://wagmi.sh) + [Next.js](https://nextjs.org/) project bootstrapped with [`create-rainbowkit`](/packages/create-rainbowkit).
+# Flow EVM RPC Playground
 
-## Getting Started
+Sandbox UI for exercising common JSON-RPC methods against Flow EVM wallets. The app is built with [Next.js](https://nextjs.org/), [wagmi](https://wagmi.sh), and [RainbowKit](https://rainbowkit.com).
 
-First, run the development server:
+## Features
+
+- Wallet connect/disconnect via RainbowKit.
+- Quick actions for frequently used RPC methods such as `eth_chainId`, `eth_sendTransaction`, and the EIP-712 signature family.
+- JSON editors that let you paste custom payloads and instantly re-run a method.
+- Input normalisation for the EIP-712 signature methods so MetaMask accepts both default and custom payloads.
+- Token presets for `wallet_watchAsset` covering popular Flow EVM ERC-20 contracts (USDF, WFLOW, BETA, Catseye, Bartholomeow, Pawderick) including logo URLs.
+
+## Quick Start
 
 ```bash
-npm run dev
+bun install
+bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open `http://localhost:3000` and connect a Flow EVM compatible wallet (MetaMask, Flow Wallet with EVM support, etc).
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+## Troubleshooting
 
-## Learn More
+- MetaMask errors such as “Invalid input” usually mean the method parameters were malformed. Check the developer console—the playground logs the exact payload it sends.
+- If signatures fail because the connected wallet is a contract account, the UI will note this under “Wallet Info”.
+- Flow Wallet extension sometimes requires a page refresh after disconnecting; use the “Disconnect” button in RainbowKit if the address looks stale.
 
-To learn more about this stack, take a look at the following resources:
+## RPC Methods Covered
 
-- [RainbowKit Documentation](https://rainbowkit.com) - Learn how to customize your wallet connection flow.
-- [wagmi Documentation](https://wagmi.sh) - Learn how to interact with Ethereum.
-- [Next.js Documentation](https://nextjs.org/docs) - Learn how to build a Next.js application.
+- `eth_requestAccounts`
+- `eth_accounts`
+- `eth_coinbase`
+- `eth_chainId`
+- `net_version`
+- `wallet_switchEthereumChain`
+- `wallet_addEthereumChain`
+- `eth_sendTransaction`
+- `eth_estimateGas`
+- `eth_getTransactionByHash`
+- `eth_sign`
+- `personal_sign`
+- `personal_ecRecover`
+- `eth_signTypedData`
+- `eth_signTypedData_v3`
+- `eth_signTypedData_v4`
+- `eth_call`
+- `eth_getCode`
+- `wallet_watchAsset`
+- `eth_getBalance`
 
-You can check out [the RainbowKit GitHub repository](https://github.com/rainbow-me/rainbowkit) - your feedback and contributions are welcome!
+Each method includes default params, quick-fill helpers, and relevant MetaMask documentation links within the UI.
 
-## Deploy on Vercel
+## Web3 SDKs & Libraries
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- `wagmi`: account state, signing helpers, balance queries, typed-data verification stubs.
+- `viem`: utilities such as `parseEther` for transaction prep.
+- `RainbowKit`: wallet onboarding and network switching UI.
+- Native `window.ethereum.request`: raw JSON-RPC execution routed through the connected wallet.
 
-Check out the [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+The playground shows how to mix high-level wagmi hooks with low-level RPC calls—useful when you need to debug wallet behaviour or compare SDK abstractions with the underlying requests.
+
+## Contributing
+
+Feel free to tweak methods or add more presets. Most of the logic lives in `pages/methods/[methodId].tsx`.
