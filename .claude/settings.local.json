@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:metamask.github.io)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(npx:*)",
+      "Bash(npm install:*)",
+      "Bash(bun install:*)",
+      "Bash(bunx shadcn@latest add:*)",
+      "Bash(bun run:*)",
+      "mcp__chrome-devtools__list_pages",
+      "mcp__chrome-devtools__navigate_page",
+      "Bash(npm run dev:*)",
+      "mcp__chrome-devtools__list_console_messages",
+      "mcp__chrome-devtools__take_snapshot",
+      "mcp__chrome-devtools__take_screenshot",
+      "mcp__chrome-devtools__list_network_requests",
+      "Bash(bun add:*)",
+      "Bash(bunx tailwindcss:*)",
+      "mcp__chrome-devtools__click"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
