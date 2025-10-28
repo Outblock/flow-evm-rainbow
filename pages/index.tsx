@@ -6,8 +6,14 @@ import { Badge } from '@/components/ui/badge'
 import { RPC_METHODS, CATEGORIES } from '@/lib/rpc-methods'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Smartphone } from 'lucide-react'
+import { useIsMobile, useIsWalletWebView } from '@/hooks/use-mobile'
 
 const Home: NextPage = () => {
+  const isMobile = useIsMobile()
+  const isWalletWebView = useIsWalletWebView()
+  
   const methodsByCategory = RPC_METHODS.reduce((acc, method) => {
     if (!acc[method.category]) {
       acc[method.category] = []
@@ -30,25 +36,38 @@ const Home: NextPage = () => {
       <MainLayout title="Dashboard">
         <div className="space-y-6">
           <div>
-            <h2 className="text-xl font-semibold mb-2">Welcome to Flow EVM Test dApp</h2>
-            <p className="text-muted-foreground">
+            <h2 className="text-lg md:text-xl font-semibold mb-2">Welcome to Flow EVM Test dApp</h2>
+            <p className="text-sm md:text-base text-muted-foreground">
               Test and debug various Ethereum RPC methods for both EOA and Smart Contract wallets.
-              Use the sidebar to navigate to specific RPC method tests.
+              Use the menu to navigate to specific RPC method tests.
             </p>
           </div>
+          
+          {/* Mobile wallet detection */}
+          {(isMobile || isWalletWebView) && (
+            <Alert>
+              <Smartphone className="h-4 w-4" />
+              <AlertDescription className="text-sm">
+                {isWalletWebView 
+                  ? "🎉 Mobile wallet detected! This dApp is optimized for testing within mobile wallet browsers."
+                  : "📱 Mobile device detected! For best experience, open this dApp within your mobile wallet's browser (MetaMask, Trust Wallet, etc.)."
+                }
+              </AlertDescription>
+            </Alert>
+          )}
 
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {Object.entries(CATEGORIES).map(([key, category]) => {
               const methods = methodsByCategory[key] || []
               
               return (
                 <Card key={key} className="hover:shadow-md transition-shadow">
                   <CardHeader className="pb-3">
-                    <CardTitle className="flex items-center gap-2 text-lg">
+                    <CardTitle className="flex items-center gap-2 text-base md:text-lg">
                       {category.name}
-                      <Badge variant="secondary">{methods.length}</Badge>
+                      <Badge variant="secondary" className="text-xs">{methods.length}</Badge>
                     </CardTitle>
-                    <CardDescription>
+                    <CardDescription className="text-xs md:text-sm">
                       {key === 'wallet' && 'Connection and account management'}
                       {key === 'network' && 'Network switching and information'}
                       {key === 'transaction' && 'Transaction operations'}
@@ -97,25 +116,25 @@ const Home: NextPage = () => {
             <CardContent>
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
-                  <h4 className="font-medium mb-2">EOA Wallets</h4>
-                  <p className="text-sm text-muted-foreground mb-3">
+                  <h4 className="text-sm md:text-base font-medium mb-2">EOA Wallets</h4>
+                  <p className="text-xs md:text-sm text-muted-foreground mb-3">
                     Test with MetaMask, WalletConnect, Coinbase Wallet, and other EOA wallets
                   </p>
-                  <div className="flex gap-2">
-                    <Badge variant="outline">MetaMask</Badge>
-                    <Badge variant="outline">WalletConnect</Badge>
-                    <Badge variant="outline">Coinbase</Badge>
+                  <div className="flex gap-2 flex-wrap">
+                    <Badge variant="outline" className="text-xs">MetaMask</Badge>
+                    <Badge variant="outline" className="text-xs">WalletConnect</Badge>
+                    <Badge variant="outline" className="text-xs">Coinbase</Badge>
                   </div>
                 </div>
                 <div>
-                  <h4 className="font-medium mb-2">Smart Contract Wallets</h4>
-                  <p className="text-sm text-muted-foreground mb-3">
+                  <h4 className="text-sm md:text-base font-medium mb-2">Smart Contract Wallets</h4>
+                  <p className="text-xs md:text-sm text-muted-foreground mb-3">
                     Test with Account Abstraction wallets and smart contract wallets
                   </p>
-                  <div className="flex gap-2">
-                    <Badge variant="outline">AA Wallets</Badge>
-                    <Badge variant="outline">Safe</Badge>
-                    <Badge variant="outline">Biconomy</Badge>
+                  <div className="flex gap-2 flex-wrap">
+                    <Badge variant="outline" className="text-xs">AA Wallets</Badge>
+                    <Badge variant="outline" className="text-xs">Safe</Badge>
+                    <Badge variant="outline" className="text-xs">Biconomy</Badge>
                   </div>
                 </div>
               </div>

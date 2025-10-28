@@ -73,4 +73,34 @@
   body {
     @apply bg-background text-foreground;
   }
+  
+  /* Mobile optimizations */
+  @media (max-width: 768px) {
+    /* Prevent zoom on input focus */
+    input[type="text"],
+    input[type="number"],
+    input[type="email"],
+    input[type="password"],
+    textarea,
+    select {
+      font-size: 16px !important;
+    }
+    
+    /* Better touch targets for mobile */
+    button {
+      min-height: 44px;
+    }
+    
+    /* Smooth scrolling on mobile */
+    html {
+      -webkit-overflow-scrolling: touch;
+    }
+  }
+  
+  /* Wallet WebView optimizations */
+  @supports (-webkit-overflow-scrolling: touch) {
+    .mobile-scroll {
+      -webkit-overflow-scrolling: touch;
+    }
+  }
 }

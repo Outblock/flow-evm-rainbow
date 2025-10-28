@@ -63,39 +63,43 @@ export function MethodPage({ method, children, onExecute, defaultParams, customI
     <MainLayout title={method.name}>
       <div className="space-y-6">
         <div>
-          <div className="flex items-center gap-4 mb-4">
-            <h2 className="text-2xl font-bold">{method.name}</h2>
-            <Badge variant="outline" className="font-mono">
-              {method.method}
-            </Badge>
-            <div className="flex gap-2">
-              {method.walletTypes.map(type => (
-                <Badge key={type} variant={type === 'EOA' ? 'default' : 'secondary'}>
-                  {type}
-                </Badge>
-              ))}
+          <div className="flex flex-col gap-4 mb-4">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+              <h2 className="text-xl md:text-2xl font-bold">{method.name}</h2>
+              <Badge variant="outline" className="font-mono text-xs w-fit">
+                {method.method}
+              </Badge>
             </div>
-            {method.metamaskDoc && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => window.open(method.metamaskDoc, '_blank')}
-                className="ml-auto"
-              >
-                <ExternalLink className="w-4 h-4 mr-2" />
-                MetaMask Docs
-              </Button>
-            )}
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+              <div className="flex gap-2 flex-wrap">
+                {method.walletTypes.map(type => (
+                  <Badge key={type} variant={type === 'EOA' ? 'default' : 'secondary'} className="text-xs">
+                    {type}
+                  </Badge>
+                ))}
+              </div>
+              {method.metamaskDoc && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => window.open(method.metamaskDoc, '_blank')}
+                  className="w-fit text-xs"
+                >
+                  <ExternalLink className="w-3 h-3 mr-1" />
+                  MetaMask Docs
+                </Button>
+              )}
+            </div>
           </div>
-          <p className="text-muted-foreground">{method.description}</p>
+          <p className="text-sm md:text-base text-muted-foreground">{method.description}</p>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div className="grid gap-6 xl:grid-cols-2">
           <div className="space-y-4">
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Parameters</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-base md:text-lg">Parameters</CardTitle>
+                <CardDescription className="text-sm">
                   Modify the parameters for the RPC call
                 </CardDescription>
               </CardHeader>
@@ -119,11 +123,11 @@ export function MethodPage({ method, children, onExecute, defaultParams, customI
                   </div>
                 ) : null}
                 
-                <div className="flex gap-2">
+                <div className="flex flex-col sm:flex-row gap-2">
                   <Button 
                     onClick={handleExecute} 
                     disabled={loading || !onExecute}
-                    className="flex-1"
+                    className="flex-1 w-full sm:w-auto"
                   >
                     <Play className="w-4 h-4 mr-2" />
                     {loading ? 'Executing...' : 'Execute'}
@@ -132,8 +136,10 @@ export function MethodPage({ method, children, onExecute, defaultParams, customI
                     variant="outline" 
                     onClick={handleReset}
                     disabled={loading}
+                    className="w-full sm:w-auto"
                   >
-                    <RotateCcw className="w-4 h-4" />
+                    <RotateCcw className="w-4 h-4 mr-2 sm:mr-0" />
+                    <span className="sm:hidden">Reset</span>
                   </Button>
                 </div>
               </CardContent>

@@ -29,7 +29,11 @@ const iconMap = {
   Coins
 }
 
-export function Sidebar() {
+interface SidebarProps {
+  onClose?: () => void
+}
+
+export function Sidebar({ onClose }: SidebarProps) {
   const router = useRouter()
   const [openCategories, setOpenCategories] = useState<string[]>(['wallet', 'transaction', 'signing'])
   
@@ -99,6 +103,7 @@ export function Sidebar() {
                             "w-full justify-start text-xs p-2 h-auto",
                             isActive && "bg-secondary"
                           )}
+                          onClick={() => onClose?.()}
                         >
                           <div className="flex flex-col items-start w-full">
                             <span className="font-medium">{method.name}</span>
@@ -119,7 +124,7 @@ export function Sidebar() {
       
       <div className="p-4 border-t">
         <Link href="/">
-          <Button variant="outline" className="w-full">
+          <Button variant="outline" className="w-full" onClick={() => onClose?.()}>
             Dashboard
           </Button>
         </Link>
