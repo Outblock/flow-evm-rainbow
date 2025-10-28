@@ -47,6 +47,51 @@ const getChainBlockExplorers = (chainId: number): string[] => {
   }
 }
 
+const FLOW_EVM_TOKENS = [
+  {
+    name: 'USD Flow',
+    symbol: 'USDF',
+    address: '0x2aaBea2058b5aC2D339b163C6Ab6f2b6d53aabED',
+    decimals: 18,
+    image: 'https://assets.findlabs.io/assets/blockscout/tokens/USDF_Logo.png'
+  },
+  {
+    name: 'Wrapped Flow',
+    symbol: 'WFLOW',
+    address: '0xd3bF53DAC106A0290B0483EcBC89d40FcC961f3e',
+    decimals: 18,
+    image: 'https://avatars.githubusercontent.com/u/62387156?s=200&v=4'
+  },
+  {
+    name: 'BETA',
+    symbol: 'BETA',
+    address: '0xd8Ad8AE8375aa31BFF541e17dC4b4917014EbDAa',
+    decimals: 18,
+    image: 'https://dd.dexscreener.com/ds-data/tokens/flowevm/0xd8ad8ae8375aa31bff541e17dc4b4917014ebdaa.png?size=lg&key=cc3fa2'
+  },
+  {
+    name: 'Catseye',
+    symbol: 'CATSEYE',
+    address: '0x9b565507858812e8B5FfbFBDE9B200A3bc2e8F76',
+    decimals: 18,
+    image: 'https://assets.findlabs.io/assets/blockscout/tokens/catseye.png'
+  },
+  {
+    name: 'Bartholomeow',
+    symbol: 'BARTHOLOMEOW',
+    address: '0x7296ebCa325e835EB6C1B690484CF6fB4c396d2C',
+    decimals: 18,
+    image: 'https://assets.findlabs.io/assets/blockscout/tokens/bartholomeow.png'
+  },
+  {
+    name: 'Pawderick',
+    symbol: 'PAWDERICK',
+    address: '0x10448481630fb6d20B597e5B3d7e42DCb1247C8A',
+    decimals: 18,
+    image: 'https://assets.findlabs.io/assets/blockscout/tokens/pawderick.png'
+  }
+]
+
 export default function DynamicMethodPage() {
   const router = useRouter()
   const { methodId } = router.query
@@ -59,9 +104,10 @@ export default function DynamicMethodPage() {
   const [contractAddress, setContractAddress] = useState('0x742d35cc6634c0532925a3b8d50d4c0332b9d002')
   const [recipient, setRecipient] = useState('0x742d35cc6634c0532925a3b8d50d4c0332b9d002')
   const [amount, setAmount] = useState('0.01')
-  const [tokenAddress, setTokenAddress] = useState('0x742d35cc6634c0532925a3b8d50d4c0332b9d002')
-  const [tokenSymbol, setTokenSymbol] = useState('FLOW')
-  const [tokenDecimals, setTokenDecimals] = useState(18)
+  const [tokenAddress, setTokenAddress] = useState(FLOW_EVM_TOKENS[0]?.address ?? '0x0000000000000000000000000000000000000000')
+  const [tokenSymbol, setTokenSymbol] = useState(FLOW_EVM_TOKENS[0]?.symbol ?? 'TOKEN')
+  const [tokenDecimals, setTokenDecimals] = useState(FLOW_EVM_TOKENS[0]?.decimals ?? 18)
+  const [tokenImage, setTokenImage] = useState(FLOW_EVM_TOKENS[0]?.image ?? '')
   const [chainId, setChainId] = useState('747')
   const [lastTypedDataSignature, setLastTypedDataSignature] = useState<string | null>(null)
   const [isValidTypedDataSignature, setIsValidTypedDataSignature] = useState<boolean | null>(null)
@@ -182,17 +228,36 @@ export default function DynamicMethodPage() {
         if (!address) {
           throw new Error('No wallet connected')
         }
-        const typedDataV1 = customParams ? JSON.parse(customParams) : [
+        const rawTypedDataInput = customParams ? JSON.parse(customParams) : [
           { type: 'string', name: 'message', value: 'Hello Flow EVM!' }
         ]
+
+        let v1AddressParam = address.toLowerCase()
+        let typedDataV1 = rawTypedDataInput
+
+        if (Array.isArray(rawTypedDataInput) && typeof rawTypedDataInput[0] === 'string' && rawTypedDataInput[0].startsWith('0x')) {
+          if (rawTypedDataInput.length < 2) {
+            throw new Error('Typed data payload missing from custom params')
+          }
+
+          v1AddressParam = rawTypedDataInput[0].toLowerCase()
+          typedDataV1 = rawTypedDataInput[1]
+        }
+
+        console.log('eth_signTypedData params:', {
+          address: v1AddressParam,
+          typedData: typedDataV1,
+          typedDataIsArray: Array.isArray(typedDataV1)
+        })
+
         const v1Signature = await ethereum.request({
           method: 'eth_signTypedData',
-          params: [typedDataV1, address]
+          params: [typedDataV1, v1AddressParam]
         })
 
         // Store signature for display (v1 verification is complex, so we'll show signature but not verify)
         setLastTypedDataSignature(v1Signature)
-        setLastTypedDataInfo({ typedData: typedDataV1, address, version: 'v1' })
+        setLastTypedDataInfo({ typedData: typedDataV1, address: v1AddressParam, version: 'v1' })
         setIsValidTypedDataSignature(null) // Can't easily verify v1 signatures
 
         return v1Signature
@@ -282,12 +347,13 @@ export default function DynamicMethodPage() {
           options: {
             address: tokenAddress,
             symbol: tokenSymbol,
-            decimals: tokenDecimals
+            decimals: tokenDecimals,
+            ...(tokenImage ? { image: tokenImage } : {})
           }
         }
         return await ethereum.request({
           method: 'wallet_watchAsset',
-          params: assetParams
+          params: [assetParams]
         })
 
       case 'eth_estimateGas':
@@ -383,14 +449,14 @@ export default function DynamicMethodPage() {
         
         // If custom params provided, use them
         const parsedCustomData = JSON.parse(customParams)
-        let addressParam = address.toLowerCase()
+        let customAddressParam = address.toLowerCase()
         let typedDataPayload = parsedCustomData
 
         if (Array.isArray(parsedCustomData)) {
           const [maybeAddress, maybeTypedData] = parsedCustomData
 
           if (typeof maybeAddress === 'string') {
-            addressParam = maybeAddress.toLowerCase()
+            customAddressParam = maybeAddress.toLowerCase()
           }
 
           if (typeof maybeTypedData === 'undefined') {
@@ -408,18 +474,18 @@ export default function DynamicMethodPage() {
 
         const customSignature = await ethereum.request({
           method: method.method,
-          params: [addressParam, customTypedDataJson]
+          params: [customAddressParam, customTypedDataJson]
         })
 
         // Store signature and typed data for verification
         setLastTypedDataSignature(customSignature)
-        setLastTypedDataInfo({ typedData: typedDataPayload, address: addressParam })
+        setLastTypedDataInfo({ typedData: typedDataPayload, address: customAddressParam })
 
         // Verify the signature if possible
         try {
           if (typeof typedDataPayload === 'object' && typedDataPayload.domain && typedDataPayload.types) {
             const isValid = await verifyTypedData(config, {
-              address: addressParam as `0x${string}`,
+              address: customAddressParam as `0x${string}`,
               domain: {
                 ...typedDataPayload.domain,
                 verifyingContract: typedDataPayload.domain.verifyingContract as `0x${string}`
@@ -599,6 +665,29 @@ export default function DynamicMethodPage() {
       case 'wallet_watchAsset':
         return (
           <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>Flow EVM tokens</Label>
+              <div className="flex flex-wrap gap-2">
+                {FLOW_EVM_TOKENS.map((token) => (
+                  <Button
+                    key={token.address}
+                    variant={tokenAddress.toLowerCase() === token.address.toLowerCase() ? 'default' : 'outline'}
+                    type="button"
+                    onClick={() => {
+                      setTokenAddress(token.address)
+                      setTokenSymbol(token.symbol)
+                      setTokenDecimals(token.decimals)
+                      setTokenImage(token.image ?? '')
+                    }}
+                  >
+                    {token.symbol}
+                  </Button>
+                ))}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Quick-fill Flow EVM token contract info.
+              </p>
+            </div>
             <div>
               <Label htmlFor="tokenAddress">Token Address</Label>
               <Input
@@ -625,6 +714,15 @@ export default function DynamicMethodPage() {
                 onChange={(e) => setTokenDecimals(parseInt(e.target.value) || 18)}
                 placeholder="18"
                 type="number"
+              />
+            </div>
+            <div>
+              <Label htmlFor="tokenImage">Token Image URL (optional)</Label>
+              <Input
+                id="tokenImage"
+                value={tokenImage}
+                onChange={(e) => setTokenImage(e.target.value)}
+                placeholder="https://example.com/token.png"
               />
             </div>
           </div>

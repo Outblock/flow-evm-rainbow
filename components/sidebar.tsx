@@ -11,7 +11,8 @@ import {
   FileCode, 
   Coins,
   ChevronDown,
-  ChevronRight
+  ChevronRight,
+  AlertTriangle
 } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -26,7 +27,8 @@ const iconMap = {
   ArrowRightLeft,
   PenTool,
   FileCode,
-  Coins
+  Coins,
+  AlertTriangle
 }
 
 interface SidebarProps {

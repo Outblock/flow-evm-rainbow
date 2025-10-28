@@ -21,7 +21,8 @@
       "mcp__chrome-devtools__click",
       "WebFetch(domain:docs.metamask.io)",
       "WebSearch",
-      "mcp__chrome-devtools__new_page"
+      "mcp__chrome-devtools__new_page",
+      "mcp__chrome-devtools__evaluate_script"
     ],
     "deny": [],
     "ask": []

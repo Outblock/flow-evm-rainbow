@@ -139,10 +139,10 @@ export const RPC_METHODS: RPCMethod[] = [
   // Signing Operations
   {
     id: 'eth_sign',
-    name: 'ETH Sign',
+    name: '⚠️ ETH Sign (Deprecated)',
     method: 'eth_sign',
-    description: 'Sign data with eth_sign (deprecated)',
-    category: 'signing',
+    description: '⚠️ DEPRECATED: Sign data with eth_sign (high security risk - testing only)',
+    category: 'deprecated',
     walletTypes: ['EOA', 'Smart Contract'],
     metamaskDoc: 'https://docs.metamask.io/wallet/reference/json-rpc-methods/eth_sign/',
     exampleParams: ["0x9b2055d370f73ec7d8a03e965129118dc8f5bf83", "0x68656c6c6f20776f726c64"]
@@ -169,20 +169,20 @@ export const RPC_METHODS: RPCMethod[] = [
   },
   {
     id: 'eth_signTypedData',
-    name: 'Sign Typed Data v1',
+    name: '⚠️ Sign Typed Data v1 (Legacy)',
     method: 'eth_signTypedData',
-    description: 'Sign structured data v1',
-    category: 'signing',
+    description: '⚠️ LEGACY: Sign structured data v1 (use v4 instead)',
+    category: 'deprecated',
     walletTypes: ['EOA', 'Smart Contract'],
     metamaskDoc: 'https://docs.metamask.io/wallet/reference/json-rpc-methods/eth_signTypedData/',
     exampleParams: [[{"type": "string", "name": "message", "value": "Hello Flow EVM!"}], "0x9b2055d370f73ec7d8a03e965129118dc8f5bf83"]
   },
   {
     id: 'eth_signTypedData_v3',
-    name: 'Sign Typed Data v3',
+    name: '⚠️ Sign Typed Data v3 (Legacy)',
     method: 'eth_signTypedData_v3',
-    description: 'Sign structured data v3',
-    category: 'signing',
+    description: '⚠️ LEGACY: Sign structured data v3 (use v4 instead)',
+    category: 'deprecated',
     walletTypes: ['EOA', 'Smart Contract'],
     metamaskDoc: 'https://docs.metamask.io/wallet/reference/json-rpc-methods/eth_signTypedData_v3/',
     exampleParams: ["0x9b2055d370f73ec7d8a03e965129118dc8f5bf83", {"types": {"EIP712Domain": [{"name": "name", "type": "string"}, {"name": "version", "type": "string"}, {"name": "chainId", "type": "uint256"}, {"name": "verifyingContract", "type": "address"}], "Person": [{"name": "name", "type": "string"}, {"name": "wallet", "type": "address"}], "Mail": [{"name": "from", "type": "Person"}, {"name": "to", "type": "Person"}, {"name": "contents", "type": "string"}]}, "primaryType": "Mail", "domain": {"name": "Flow EVM Mail", "version": "1", "chainId": 747, "verifyingContract": "0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC"}, "message": {"from": {"name": "Cow", "wallet": "0x9b2055d370f73ec7d8a03e965129118dc8f5bf83"}, "to": {"name": "Bob", "wallet": "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB"}, "contents": "Hello, Bob!"}}]
@@ -191,7 +191,7 @@ export const RPC_METHODS: RPCMethod[] = [
     id: 'eth_signTypedData_v4',
     name: 'Sign Typed Data v4',
     method: 'eth_signTypedData_v4',
-    description: 'Sign structured data v4',
+    description: '✅ RECOMMENDED: Sign structured data v4 (current standard)',
     category: 'signing',
     walletTypes: ['EOA', 'Smart Contract'],
     metamaskDoc: 'https://docs.metamask.io/wallet/reference/json-rpc-methods/eth_signTypedData_v4/',
@@ -260,5 +260,6 @@ export const CATEGORIES = {
   transaction: { name: 'Transactions', icon: 'ArrowRightLeft' },
   signing: { name: 'Signing', icon: 'PenTool' },
   contract: { name: 'Contracts', icon: 'FileCode' },
-  asset: { name: 'Assets', icon: 'Coins' }
+  asset: { name: 'Assets', icon: 'Coins' },
+  deprecated: { name: 'Deprecated', icon: 'AlertTriangle' }
 } as const

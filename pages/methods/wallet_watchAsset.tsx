@@ -67,8 +67,54 @@ export default function WatchAssetPage() {
     }
   }
 
-  // Predefined tokens for quick testing
-  const predefinedTokens = [
+  // Flow EVM popular tokens
+  const flowTokens = [
+    {
+      name: 'USD Flow',
+      address: '0x2aaBea2058b5aC2D339b163C6Ab6f2b6d53aabED',
+      symbol: 'USDF',
+      decimals: '18',
+      image: 'https://assets.findlabs.io/assets/blockscout/tokens/USDF_Logo.png'
+    },
+    {
+      name: 'Wrapped Flow',
+      address: '0xd3bF53DAC106A0290B0483EcBC89d40FcC961f3e',
+      symbol: 'WFLOW',
+      decimals: '18',
+      image: 'https://avatars.githubusercontent.com/u/62387156?s=200&v=4'
+    },
+    {
+      name: 'BETA',
+      address: '0xd8Ad8AE8375aa31BFF541e17dC4b4917014EbDAa',
+      symbol: 'BETA',
+      decimals: '18',
+      image: 'https://dd.dexscreener.com/ds-data/tokens/flowevm/0xd8ad8ae8375aa31bff541e17dc4b4917014ebdaa.png?size=lg&key=cc3fa2'
+    },
+    {
+      name: 'Catseye',
+      address: '0x9b565507858812e8B5FfbFBDE9B200A3bc2e8F76',
+      symbol: 'Catseye',
+      decimals: '18',
+      image: 'https://assets.findlabs.io/assets/blockscout/tokens/catseye.png'
+    },
+    {
+      name: 'Bartholomeow',
+      address: '0x7296ebCa325e835EB6C1B690484CF6fB4c396d2C',
+      symbol: 'Bartholomeow',
+      decimals: '18',
+      image: 'https://assets.findlabs.io/assets/blockscout/tokens/bartholomeow.png'
+    },
+    {
+      name: 'Pawderick',
+      address: '0x10448481630fb6d20B597e5B3d7e42DCb1247C8A',
+      symbol: 'Pawderick',
+      decimals: '18',
+      image: 'https://assets.findlabs.io/assets/blockscout/tokens/pawderick.png'
+    }
+  ]
+
+  // Ethereum tokens for comparison  
+  const ethereumTokens = [
     {
       name: 'USDC',
       address: '0xA0b86991c431e58dC2bD7f4b4aC6C1D9A7D7f7d7E8',
@@ -85,7 +131,7 @@ export default function WatchAssetPage() {
     }
   ]
 
-  const loadPredefinedToken = (token: typeof predefinedTokens[0]) => {
+  const loadPredefinedToken = (token: typeof flowTokens[0]) => {
     setTokenAddress(token.address)
     setSymbol(token.symbol)
     setDecimals(token.decimals)
@@ -173,20 +219,62 @@ export default function WatchAssetPage() {
           <Separator />
 
           <div>
-            <div className="text-sm font-medium mb-3">Quick Add Predefined Tokens</div>
+            <div className="text-sm font-medium mb-3">Flow EVM Popular Tokens</div>
             <div className="space-y-2">
-              {predefinedTokens.map((token) => (
+              {flowTokens.map((token) => (
                 <Button
                   key={token.symbol}
                   variant="outline"
                   size="sm"
                   onClick={() => loadPredefinedToken(token)}
-                  className="w-full justify-start"
+                  className="w-full justify-start h-auto p-3"
                 >
-                  <div className="text-left">
-                    <div className="font-medium">{token.name}</div>
-                    <div className="text-xs text-muted-foreground font-mono">
-                      {token.symbol} • {token.decimals} decimals
+                  <div className="flex items-center gap-3 w-full">
+                    <img 
+                      src={token.image} 
+                      alt={token.name}
+                      className="w-8 h-8 rounded-full flex-shrink-0"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIxNiIgY3k9IjE2IiByPSIxNiIgZmlsbD0iI0Y0RjRGNCIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkb21pbmFudC1iYXNlbGluZT0iY2VudHJhbCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzk5OTk5OSIgZm9udC1zaXplPSIxMiI+VDwvdGV4dD48L3N2Zz4='
+                      }}
+                    />
+                    <div className="text-left flex-1">
+                      <div className="font-medium">{token.name}</div>
+                      <div className="text-xs text-muted-foreground font-mono">
+                        {token.symbol} • {token.decimals} decimals
+                      </div>
+                    </div>
+                  </div>
+                </Button>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <div className="text-sm font-medium mb-3">Ethereum Tokens</div>
+            <div className="space-y-2">
+              {ethereumTokens.map((token) => (
+                <Button
+                  key={token.symbol}
+                  variant="outline"
+                  size="sm"
+                  onClick={() => loadPredefinedToken(token)}
+                  className="w-full justify-start h-auto p-3"
+                >
+                  <div className="flex items-center gap-3 w-full">
+                    <img 
+                      src={token.image} 
+                      alt={token.name}
+                      className="w-8 h-8 rounded-full flex-shrink-0"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIxNiIgY3k9IjE2IiByPSIxNiIgZmlsbD0iI0Y0RjRGNCIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkb21pbmFudC1iYXNlbGluZT0iY2VudHJhbCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzk5OTk5OSIgZm9udC1zaXplPSIxMiI+VDwvdGV4dD48L3N2Zz4='
+                      }}
+                    />
+                    <div className="text-left flex-1">
+                      <div className="font-medium">{token.name}</div>
+                      <div className="text-xs text-muted-foreground font-mono">
+                        {token.symbol} • {token.decimals} decimals
+                      </div>
                     </div>
                   </div>
                 </Button>
