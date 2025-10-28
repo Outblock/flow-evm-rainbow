@@ -19,12 +19,6 @@ bun dev
 
 Open `http://localhost:3000` and connect a Flow EVM compatible wallet (MetaMask, Flow Wallet with EVM support, etc).
 
-## Troubleshooting
-
-- MetaMask errors such as “Invalid input” usually mean the method parameters were malformed. Check the developer console—the playground logs the exact payload it sends.
-- If signatures fail because the connected wallet is a contract account, the UI will note this under “Wallet Info”.
-- Flow Wallet extension sometimes requires a page refresh after disconnecting; use the “Disconnect” button in RainbowKit if the address looks stale.
-
 ## RPC Methods Covered
 
 - `eth_requestAccounts`
