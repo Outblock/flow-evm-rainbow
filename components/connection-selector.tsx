@@ -133,15 +133,16 @@ export function ConnectionSelector({ onMethodChange }: ConnectionSelectorProps) 
         <div>
           <label className="text-sm font-medium mb-2 block">Connection Method</label>
           <Select value={selectedMethod} onValueChange={handleMethodChange}>
-            <SelectTrigger>
+            <SelectTrigger className="bg-background border-border">
               <SelectValue placeholder="Select connection method" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-popover border-border">
               {availableMethods.map((method) => (
                 <SelectItem 
                   key={method.id} 
                   value={method.id}
                   disabled={!method.available}
+                  className="focus:bg-accent focus:text-accent-foreground"
                 >
                   <div className="flex items-center gap-2">
                     <span>{method.icon}</span>

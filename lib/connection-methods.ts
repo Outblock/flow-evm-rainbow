@@ -1,7 +1,6 @@
 import { ethers } from 'ethers'
 import Web3 from 'web3'
 import { createWalletClient, custom, http } from 'viem'
-import { flowEvm } from 'wagmi/chains'
 
 export type ConnectionMethod = 'rainbowkit' | 'window.ethereum' | 'window.frw' | 'window.metamask' | 'ethers' | 'web3' | 'viem' | 'wagmi'
 
@@ -205,7 +204,6 @@ export class ConnectionManager {
     }
     
     const client = createWalletClient({
-      chain: flowEvm,
       transport: custom(window.ethereum)
     })
     
