@@ -363,7 +363,10 @@ export default function DynamicMethodPage() {
           try {
             const isValid = await verifyTypedData(config, {
               address: address as `0x${string}`,
-              domain: typedData.domain,
+              domain: {
+                ...typedData.domain,
+                verifyingContract: typedData.domain.verifyingContract as `0x${string}`
+              },
               types: typedData.types,
               primaryType: typedData.primaryType,
               message: typedData.message,
@@ -417,7 +420,10 @@ export default function DynamicMethodPage() {
           if (typeof typedDataPayload === 'object' && typedDataPayload.domain && typedDataPayload.types) {
             const isValid = await verifyTypedData(config, {
               address: addressParam as `0x${string}`,
-              domain: typedDataPayload.domain,
+              domain: {
+                ...typedDataPayload.domain,
+                verifyingContract: typedDataPayload.domain.verifyingContract as `0x${string}`
+              },
               types: typedDataPayload.types,
               primaryType: typedDataPayload.primaryType,
               message: typedDataPayload.message,
