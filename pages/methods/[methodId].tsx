@@ -29,7 +29,7 @@ export default function DynamicMethodPage() {
   const [tokenAddress, setTokenAddress] = useState('0x742d35cc6634c0532925a3b8d50d4c0332b9d002')
   const [tokenSymbol, setTokenSymbol] = useState('FLOW')
   const [tokenDecimals, setTokenDecimals] = useState(18)
-  const [chainId, setChainId] = useState('646')
+  const [chainId, setChainId] = useState('747')
 
   const { address } = useAccount()
   const { signMessageAsync } = useSignMessage()
@@ -59,12 +59,41 @@ export default function DynamicMethodPage() {
     checkContractType()
   }, [address])
 
-  // Pre-fill parameters with examples when method changes
+  // Pre-fill parameters with examples when method changes or address connects
   useEffect(() => {
-    if (method?.exampleParams) {
+    if (method?.exampleParams && address) {
+      let dynamicParams = [...method.exampleParams]
+      
+      // Replace placeholder address with actual connected address and update chainId
+      const replaceAddress = (obj: any): any => {
+        if (typeof obj === 'string' && obj.startsWith('0x') && obj.length === 42) {
+          return obj === '0x9b2055d370f73ec7d8a03e965129118dc8f5bf83' ? address : obj
+        }
+        if (Array.isArray(obj)) {
+          return obj.map(replaceAddress)
+        }
+        if (typeof obj === 'object' && obj !== null) {
+          const newObj = { ...obj }
+          for (const key in newObj) {
+            if (key === 'wallet' && typeof newObj[key] === 'string' && newObj[key].startsWith('0x')) {
+              newObj[key] = address
+            } else if (key === 'chainId' && typeof newObj[key] === 'number') {
+              newObj[key] = currentChainId
+            } else {
+              newObj[key] = replaceAddress(newObj[key])
+            }
+          }
+          return newObj
+        }
+        return obj
+      }
+      
+      dynamicParams = dynamicParams.map(replaceAddress)
+      setCustomParams(JSON.stringify(dynamicParams, null, 2))
+    } else if (method?.exampleParams) {
       setCustomParams(JSON.stringify(method.exampleParams, null, 2))
     }
-  }, [method])
+  }, [method, address, currentChainId])
 
   if (!method) {
     return (
@@ -114,12 +143,15 @@ export default function DynamicMethodPage() {
         })
 
       case 'eth_signTypedData':
+        if (!address) {
+          throw new Error('No wallet connected')
+        }
         const typedDataV1 = customParams ? JSON.parse(customParams) : [
           { type: 'string', name: 'message', value: 'Hello Flow EVM!' }
         ]
         return await ethereum.request({
           method: 'eth_signTypedData',
-          params: [address, typedDataV1]
+          params: [typedDataV1, address]
         })
 
       case 'eth_sendTransaction':
@@ -172,12 +204,13 @@ export default function DynamicMethodPage() {
         })
 
       case 'wallet_addEthereumChain':
+        const isTestnet = parseInt(chainId) === 545
         const chainParams = {
           chainId: `0x${parseInt(chainId).toString(16)}`,
-          chainName: 'Flow Previewnet',
+          chainName: isTestnet ? 'EVM on Flow Testnet' : 'EVM on Flow',
           nativeCurrency: { name: 'Flow', symbol: 'FLOW', decimals: 18 },
-          rpcUrls: ['https://previewnet.evm.nodes.onflow.org'],
-          blockExplorerUrls: ['https://previewnet.flowdiver.io']
+          rpcUrls: [isTestnet ? 'https://testnet.evm.nodes.onflow.org' : 'https://mainnet.evm.nodes.onflow.org'],
+          blockExplorerUrls: [isTestnet ? 'https://evm-testnet.flowscan.io' : 'https://evm.flowscan.io']
         }
         return await ethereum.request({
           method: 'wallet_addEthereumChain',
@@ -209,26 +242,90 @@ export default function DynamicMethodPage() {
 
       case 'eth_signTypedData_v3':
       case 'eth_signTypedData_v4':
-        const typedData = customParams ? JSON.parse(customParams) : {
-          types: {
-            Person: [
-              { name: 'name', type: 'string' },
-              { name: 'wallet', type: 'address' }
-            ]
-          },
-          primaryType: 'Person',
-          domain: {
-            name: 'Flow EVM Test',
-            version: '1'
-          },
-          message: {
-            name: 'Test User',
-            wallet: address
-          }
+        if (!address) {
+          throw new Error('No wallet connected')
         }
+        
+        // First let's try with the EXACT working example to see if that works
+        if (!customParams) {
+          console.log('Testing with EXACT hardcoded working example')
+          return await ethereum.request({
+            method: method.method,
+            params: [
+              address.toLowerCase(),
+              {
+                types: {
+                  EIP712Domain: [
+                    {
+                      name: "name",
+                      type: "string"
+                    },
+                    {
+                      name: "version",
+                      type: "string"
+                    },
+                    {
+                      name: "chainId",
+                      type: "uint256"
+                    },
+                    {
+                      name: "verifyingContract",
+                      type: "address"
+                    }
+                  ],
+                  Person: [
+                    {
+                      name: "name",
+                      type: "string"
+                    },
+                    {
+                      name: "wallet",
+                      type: "address"
+                    }
+                  ],
+                  Mail: [
+                    {
+                      name: "from",
+                      type: "Person"
+                    },
+                    {
+                      name: "to",
+                      type: "Person"
+                    },
+                    {
+                      name: "contents",
+                      type: "string"
+                    }
+                  ]
+                },
+                primaryType: "Mail",
+                domain: {
+                  name: "Ether Mail",
+                  version: "1",
+                  chainId: 1,
+                  verifyingContract: "0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC"
+                },
+                message: {
+                  from: {
+                    name: "Cow",
+                    wallet: "0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826"
+                  },
+                  to: {
+                    name: "Bob",
+                    wallet: "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB"
+                  },
+                  contents: "Hello, Bob!"
+                }
+              }
+            ]
+          })
+        }
+        
+        // If custom params provided, use them
+        const parsedCustomData = JSON.parse(customParams)
         return await ethereum.request({
           method: method.method,
-          params: [address, JSON.stringify(typedData)]
+          params: [address.toLowerCase(), parsedCustomData]
         })
 
       default:
@@ -359,8 +456,26 @@ export default function DynamicMethodPage() {
                 id="chainId"
                 value={chainId}
                 onChange={(e) => setChainId(e.target.value)}
-                placeholder="646"
+                placeholder="747"
               />
+              <div className="flex gap-2 mt-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setChainId('747')}
+                >
+                  Mainnet (747)
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setChainId('545')}
+                >
+                  Testnet (545)
+                </Button>
+              </div>
             </div>
           </div>
         )

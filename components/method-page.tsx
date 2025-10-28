@@ -103,19 +103,21 @@ export function MethodPage({ method, children, onExecute, defaultParams, customI
                 {customInputs && (
                   <>
                     {customInputs}
-                    <Separator />
+                    {!method.id.includes('signTypedData') && !method.id.includes('personal_sign') && !method.id.includes('eth_sign') && <Separator />}
                   </>
                 )}
-                <div>
-                  <Label htmlFor="params">JSON Parameters</Label>
-                  <Textarea
-                    id="params"
-                    value={params}
-                    onChange={(e) => setParams(e.target.value)}
-                    className="font-mono text-sm min-h-[120px]"
-                    placeholder="[]"
-                  />
-                </div>
+                {!customInputs || (!method.id.includes('signTypedData') && !method.id.includes('personal_sign') && !method.id.includes('eth_sign')) ? (
+                  <div>
+                    <Label htmlFor="params">JSON Parameters</Label>
+                    <Textarea
+                      id="params"
+                      value={params}
+                      onChange={(e) => setParams(e.target.value)}
+                      className="font-mono text-sm min-h-[120px]"
+                      placeholder="[]"
+                    />
+                  </div>
+                ) : null}
                 
                 <div className="flex gap-2">
                   <Button 

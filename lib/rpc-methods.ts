@@ -73,7 +73,7 @@ export const RPC_METHODS: RPCMethod[] = [
     walletTypes: ['EOA', 'Smart Contract'],
     metamaskDoc: 'https://docs.metamask.io/wallet/reference/json-rpc-methods/wallet_switchEthereumChain/',
     exampleParams: [{
-      "chainId": "0x286"
+      "chainId": "0x2eb"
     }]
   },
   {
@@ -85,15 +85,15 @@ export const RPC_METHODS: RPCMethod[] = [
     walletTypes: ['EOA', 'Smart Contract'],
     metamaskDoc: 'https://docs.metamask.io/wallet/reference/json-rpc-methods/wallet_addEthereumChain/',
     exampleParams: [{
-      "chainId": "0x286",
-      "chainName": "Flow Previewnet",
+      "chainId": "0x2eb",
+      "chainName": "EVM on Flow",
       "nativeCurrency": {
         "name": "Flow",
         "symbol": "FLOW",
         "decimals": 18
       },
-      "rpcUrls": ["https://previewnet.evm.nodes.onflow.org"],
-      "blockExplorerUrls": ["https://previewnet.flowdiver.io"]
+      "rpcUrls": ["https://mainnet.evm.nodes.onflow.org"],
+      "blockExplorerUrls": ["https://evm.flowscan.io"]
     }]
   },
   
@@ -175,7 +175,7 @@ export const RPC_METHODS: RPCMethod[] = [
     category: 'signing',
     walletTypes: ['EOA', 'Smart Contract'],
     metamaskDoc: 'https://docs.metamask.io/wallet/reference/json-rpc-methods/eth_signTypedData/',
-    exampleParams: ["0x9b2055d370f73ec7d8a03e965129118dc8f5bf83", [{"type": "string", "name": "message", "value": "Hello Flow EVM!"}]]
+    exampleParams: [[{"type": "string", "name": "message", "value": "Hello Flow EVM!"}], "0x9b2055d370f73ec7d8a03e965129118dc8f5bf83"]
   },
   {
     id: 'eth_signTypedData_v3',
@@ -185,7 +185,7 @@ export const RPC_METHODS: RPCMethod[] = [
     category: 'signing',
     walletTypes: ['EOA', 'Smart Contract'],
     metamaskDoc: 'https://docs.metamask.io/wallet/reference/json-rpc-methods/eth_signTypedData_v3/',
-    exampleParams: ["0x9b2055d370f73ec7d8a03e965129118dc8f5bf83", {"types": {"EIP712Domain": [{"name": "name", "type": "string"}], "Person": [{"name": "name", "type": "string"}, {"name": "wallet", "type": "address"}]}, "primaryType": "Person", "domain": {"name": "Flow EVM Test"}, "message": {"name": "Test User", "wallet": "0x9b2055d370f73ec7d8a03e965129118dc8f5bf83"}}]
+    exampleParams: ["0x9b2055d370f73ec7d8a03e965129118dc8f5bf83", {"types": {"EIP712Domain": [{"name": "name", "type": "string"}, {"name": "version", "type": "string"}, {"name": "chainId", "type": "uint256"}, {"name": "verifyingContract", "type": "address"}], "Person": [{"name": "name", "type": "string"}, {"name": "wallet", "type": "address"}], "Mail": [{"name": "from", "type": "Person"}, {"name": "to", "type": "Person"}, {"name": "contents", "type": "string"}]}, "primaryType": "Mail", "domain": {"name": "Flow EVM Mail", "version": "1", "chainId": 747, "verifyingContract": "0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC"}, "message": {"from": {"name": "Cow", "wallet": "0x9b2055d370f73ec7d8a03e965129118dc8f5bf83"}, "to": {"name": "Bob", "wallet": "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB"}, "contents": "Hello, Bob!"}}]
   },
   {
     id: 'eth_signTypedData_v4',
@@ -195,7 +195,7 @@ export const RPC_METHODS: RPCMethod[] = [
     category: 'signing',
     walletTypes: ['EOA', 'Smart Contract'],
     metamaskDoc: 'https://docs.metamask.io/wallet/reference/json-rpc-methods/eth_signTypedData_v4/',
-    exampleParams: ["0x9b2055d370f73ec7d8a03e965129118dc8f5bf83", {"types": {"EIP712Domain": [{"name": "name", "type": "string"}, {"name": "version", "type": "string"}], "Person": [{"name": "name", "type": "string"}, {"name": "wallet", "type": "address"}]}, "primaryType": "Person", "domain": {"name": "Flow EVM Test", "version": "1"}, "message": {"name": "Test User", "wallet": "0x9b2055d370f73ec7d8a03e965129118dc8f5bf83"}}]
+    exampleParams: ["0x9b2055d370f73ec7d8a03e965129118dc8f5bf83", {"types": {"EIP712Domain": [{"name": "name", "type": "string"}, {"name": "version", "type": "string"}, {"name": "chainId", "type": "uint256"}, {"name": "verifyingContract", "type": "address"}], "Person": [{"name": "name", "type": "string"}, {"name": "wallet", "type": "address"}], "Mail": [{"name": "from", "type": "Person"}, {"name": "to", "type": "Person"}, {"name": "contents", "type": "string"}]}, "primaryType": "Mail", "domain": {"name": "Flow EVM Mail", "version": "1", "chainId": 747, "verifyingContract": "0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC"}, "message": {"from": {"name": "Cow", "wallet": "0x9b2055d370f73ec7d8a03e965129118dc8f5bf83"}, "to": {"name": "Bob", "wallet": "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB"}, "contents": "Hello, Bob!"}}]
   },
   
   // Contract Operations
