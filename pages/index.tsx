@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Smartphone } from 'lucide-react'
 import { useIsMobile, useIsWalletWebView } from '@/hooks/use-mobile'
+import { ConnectionSelector } from '@/components/connection-selector'
 
 const Home: NextPage = () => {
   const isMobile = useIsMobile()
@@ -55,6 +56,9 @@ const Home: NextPage = () => {
               </AlertDescription>
             </Alert>
           )}
+
+          {/* Connection Method Selector */}
+          <ConnectionSelector />
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {Object.entries(CATEGORIES).map(([key, category]) => {

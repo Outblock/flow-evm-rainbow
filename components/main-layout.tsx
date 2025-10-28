@@ -1,8 +1,8 @@
 'use client'
 
 import { ReactNode, useState } from 'react'
-import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { Sidebar } from './sidebar'
+import { UniversalConnectButton } from './universal-connect-button'
 import { Button } from '@/components/ui/button'
 import { Menu, X } from 'lucide-react'
 
@@ -48,7 +48,7 @@ export function MainLayout({ children, title }: MainLayoutProps) {
             {title && <h1 className="text-xl md:text-2xl font-bold truncate">{title}</h1>}
           </div>
           <div className="flex items-center">
-            <ConnectButton showBalance={false} chainStatus="icon" accountStatus="avatar" />
+            <UniversalConnectButton />
           </div>
         </header>
         <main className="flex-1 p-4 md:p-6 overflow-auto">

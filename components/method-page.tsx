@@ -1,6 +1,6 @@
 'use client'
 
-import { ReactNode, useState } from 'react'
+import { ReactNode, useState, useEffect } from 'react'
 import { MainLayout } from './main-layout'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -8,8 +8,9 @@ import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
-import { Copy, Play, RotateCcw, ExternalLink } from 'lucide-react'
+import { Copy, Play, RotateCcw, ExternalLink, Settings } from 'lucide-react'
 import { RPCMethod } from '@/lib/rpc-methods'
+import { connectionManager, CONNECTION_METHODS } from '@/lib/connection-methods'
 
 interface MethodPageProps {
   method: RPCMethod
@@ -24,6 +25,17 @@ export function MethodPage({ method, children, onExecute, defaultParams, customI
   const [result, setResult] = useState<any>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [currentConnectionMethod, setCurrentConnectionMethod] = useState(connectionManager.getCurrentMethod())
+
+  // Listen for connection method changes
+  useEffect(() => {
+    const handleConnectionMethodChange = () => {
+      setCurrentConnectionMethod(connectionManager.getCurrentMethod())
+    }
+    
+    window.addEventListener('connectionMethodChanged', handleConnectionMethodChange)
+    return () => window.removeEventListener('connectionMethodChanged', handleConnectionMethodChange)
+  }, [])
 
   const handleExecute = async () => {
     if (!onExecute) return
@@ -96,17 +108,26 @@ export function MethodPage({ method, children, onExecute, defaultParams, customI
                   </Badge>
                 ))}
               </div>
-              {method.metamaskDoc && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => window.open(method.metamaskDoc, '_blank')}
-                  className="w-fit text-xs"
-                >
-                  <ExternalLink className="w-3 h-3 mr-1" />
-                  MetaMask Docs
-                </Button>
-              )}
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1">
+                  <Settings className="w-3 h-3" />
+                  <span className="text-xs text-muted-foreground">Connection:</span>
+                  <Badge variant="outline" className="text-xs">
+                    {CONNECTION_METHODS.find(m => m.id === currentConnectionMethod)?.name || currentConnectionMethod}
+                  </Badge>
+                </div>
+                {method.metamaskDoc && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => window.open(method.metamaskDoc, '_blank')}
+                    className="w-fit text-xs"
+                  >
+                    <ExternalLink className="w-3 h-3 mr-1" />
+                    MetaMask Docs
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
           <p className="text-sm md:text-base text-muted-foreground">{method.description}</p>

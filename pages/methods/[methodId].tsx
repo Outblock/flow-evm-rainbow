@@ -13,6 +13,7 @@ import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { Textarea } from '@/components/ui/textarea'
 import { parseEther } from 'viem'
+import { connectionManager } from '@/lib/connection-methods'
 
 // Helper functions for chain configuration
 const getChainRpcUrls = (chainId: number): string[] => {
@@ -193,12 +194,25 @@ export default function DynamicMethodPage() {
   }
 
   const executeMethod = async (params: any[]) => {
-    if (!address) {
-      throw new Error('No wallet connected')
+    const currentMethod = connectionManager.getCurrentMethod()
+    
+    // For RainbowKit, still require connection through wagmi
+    if (currentMethod === 'rainbowkit' && !address) {
+      throw new Error('No wallet connected via RainbowKit')
+    }
+    
+    // For direct connection methods, try to use connection manager
+    if (currentMethod !== 'rainbowkit') {
+      try {
+        return await connectionManager.executeRPCMethod(method.method, params)
+      } catch (error) {
+        console.error('Connection manager execution failed:', error)
+        // Fallback to original logic for backward compatibility
+      }
     }
 
     const ethereum = (window as any).ethereum
-    if (!ethereum) {
+    if (!ethereum && currentMethod === 'rainbowkit') {
       throw new Error('No Ethereum provider found')
     }
 

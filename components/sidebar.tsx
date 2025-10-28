@@ -58,8 +58,10 @@ export function Sidebar({ onClose }: SidebarProps) {
   return (
     <div className="w-64 border-r bg-background h-screen flex flex-col">
       <div className="p-4 border-b">
-        <h2 className="font-semibold text-lg">Flow EVM Test dApp</h2>
-        <p className="text-sm text-muted-foreground">RPC Methods Testing</p>
+        <Link href="/" className="block hover:opacity-80 transition-opacity cursor-pointer" onClick={() => onClose?.()}>
+          <h2 className="font-semibold text-lg">Flow EVM Test dApp</h2>
+          <p className="text-sm text-muted-foreground">RPC Methods Testing</p>
+        </Link>
       </div>
       
       <ScrollArea className="flex-1">
