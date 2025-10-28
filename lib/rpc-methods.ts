@@ -4,7 +4,7 @@ export interface RPCMethod {
   method: string
   description: string
   params?: any[]
-  category: 'wallet' | 'transaction' | 'signing' | 'network' | 'contract' | 'asset'
+  category: 'wallet' | 'transaction' | 'signing' | 'network' | 'contract' | 'asset' | 'deprecated'
   walletTypes: ('EOA' | 'Smart Contract')[]
   metamaskDoc?: string
   exampleParams?: any[]
