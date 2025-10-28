@@ -1,5 +1,5 @@
 import { http, createConfig } from '@wagmi/core'
-import { mainnet, sepolia, flowMainnet, flowTestnet } from '@wagmi/core/chains'
+import { mainnet, sepolia, flowMainnet, flowTestnet, base, baseSepolia, arbitrum, optimism, polygon, avalanche } from '@wagmi/core/chains'
 import { connectorsForWallets } from '@rainbow-me/rainbowkit';
 import {
     rainbowWallet,
@@ -90,11 +90,93 @@ const connectors = connectorsForWallets(
 
 export const config = createConfig({
   connectors: connectors,
-  chains: [mainnet, flowMainnet, flowTestnet],
+  chains: [
+    mainnet, 
+    sepolia,
+    flowMainnet, 
+    flowTestnet, 
+    base, 
+    baseSepolia, 
+    arbitrum, 
+    optimism, 
+    polygon, 
+    avalanche
+  ],
   transports: {
     [mainnet.id]: http(),
+    [sepolia.id]: http(),
     [flowMainnet.id]: http(),
     [flowTestnet.id]: http(),
+    [base.id]: http(),
+    [baseSepolia.id]: http(),
+    [arbitrum.id]: http(),
+    [optimism.id]: http(),
+    [polygon.id]: http(),
+    [avalanche.id]: http(),
   },
   ssr: true
 })
+
+// Export supported chains for use in other components
+export const supportedChains = [
+  {
+    id: mainnet.id,
+    name: mainnet.name,
+    nativeCurrency: mainnet.nativeCurrency,
+    testnet: false
+  },
+  {
+    id: sepolia.id,
+    name: sepolia.name,
+    nativeCurrency: sepolia.nativeCurrency,
+    testnet: true
+  },
+  {
+    id: flowMainnet.id,
+    name: 'Flow EVM Mainnet',
+    nativeCurrency: flowMainnet.nativeCurrency,
+    testnet: false
+  },
+  {
+    id: flowTestnet.id,
+    name: 'Flow EVM Testnet',
+    nativeCurrency: flowTestnet.nativeCurrency,
+    testnet: true
+  },
+  {
+    id: base.id,
+    name: base.name,
+    nativeCurrency: base.nativeCurrency,
+    testnet: false
+  },
+  {
+    id: baseSepolia.id,
+    name: baseSepolia.name,
+    nativeCurrency: baseSepolia.nativeCurrency,
+    testnet: true
+  },
+  {
+    id: arbitrum.id,
+    name: arbitrum.name,
+    nativeCurrency: arbitrum.nativeCurrency,
+    testnet: false
+  },
+  {
+    id: optimism.id,
+    name: optimism.name,
+    nativeCurrency: optimism.nativeCurrency,
+    testnet: false
+  },
+  {
+    id: polygon.id,
+    name: polygon.name,
+    nativeCurrency: polygon.nativeCurrency,
+    testnet: false
+  },
+  {
+    id: avalanche.id,
+    name: avalanche.name,
+    nativeCurrency: avalanche.nativeCurrency,
+    testnet: false
+  }
+]

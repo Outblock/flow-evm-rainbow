@@ -1,8 +1,8 @@
 import { useRouter } from 'next/router'
 import { useState, useEffect } from 'react'
 import { useAccount, useSignMessage, useBalance, useChainId, useSendTransaction, usePublicClient } from 'wagmi'
-import { getBytecode } from '@wagmi/core'
-import { config } from '@/component/config'
+import { getBytecode, verifyTypedData } from '@wagmi/core'
+import { config, supportedChains } from '@/component/config'
 import { MethodPage } from '@/components/method-page'
 import { RPC_METHODS } from '@/lib/rpc-methods'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -14,6 +14,39 @@ import { Separator } from '@/components/ui/separator'
 import { Textarea } from '@/components/ui/textarea'
 import { parseEther } from 'viem'
 
+// Helper functions for chain configuration
+const getChainRpcUrls = (chainId: number): string[] => {
+  switch (chainId) {
+    case 1: return ['https://mainnet.infura.io/v3/', 'https://rpc.ankr.com/eth']
+    case 11155111: return ['https://sepolia.infura.io/v3/', 'https://rpc.sepolia.org']
+    case 747: return ['https://mainnet.evm.nodes.onflow.org']
+    case 545: return ['https://testnet.evm.nodes.onflow.org']
+    case 8453: return ['https://mainnet.base.org', 'https://rpc.ankr.com/base']
+    case 84532: return ['https://sepolia.base.org']
+    case 42161: return ['https://arb1.arbitrum.io/rpc', 'https://rpc.ankr.com/arbitrum']
+    case 10: return ['https://mainnet.optimism.io', 'https://rpc.ankr.com/optimism']
+    case 137: return ['https://polygon-rpc.com', 'https://rpc.ankr.com/polygon']
+    case 43114: return ['https://api.avax.network/ext/bc/C/rpc', 'https://rpc.ankr.com/avalanche']
+    default: return ['https://rpc.example.com']
+  }
+}
+
+const getChainBlockExplorers = (chainId: number): string[] => {
+  switch (chainId) {
+    case 1: return ['https://etherscan.io']
+    case 11155111: return ['https://sepolia.etherscan.io']
+    case 747: return ['https://evm.flowscan.io']
+    case 545: return ['https://evm-testnet.flowscan.io']
+    case 8453: return ['https://basescan.org']
+    case 84532: return ['https://sepolia.basescan.org']
+    case 42161: return ['https://arbiscan.io']
+    case 10: return ['https://optimistic.etherscan.io']
+    case 137: return ['https://polygonscan.com']
+    case 43114: return ['https://snowtrace.io']
+    default: return ['https://explorer.example.com']
+  }
+}
+
 export default function DynamicMethodPage() {
   const router = useRouter()
   const { methodId } = router.query
@@ -22,7 +55,7 @@ export default function DynamicMethodPage() {
   const [customMessage, setCustomMessage] = useState('Hello, Flow EVM!')
   const [customParams, setCustomParams] = useState('')
   const [isSmartContract, setIsSmartContract] = useState<boolean | null>(null)
-  const [transactionHash, setTransactionHash] = useState('0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef')
+  const [transactionHash, setTransactionHash] = useState('0x37301dc6609f54c7638a6c9d31db053cb5d47dde1975147b66216e5a7085ae98')
   const [contractAddress, setContractAddress] = useState('0x742d35cc6634c0532925a3b8d50d4c0332b9d002')
   const [recipient, setRecipient] = useState('0x742d35cc6634c0532925a3b8d50d4c0332b9d002')
   const [amount, setAmount] = useState('0.01')
@@ -30,6 +63,9 @@ export default function DynamicMethodPage() {
   const [tokenSymbol, setTokenSymbol] = useState('FLOW')
   const [tokenDecimals, setTokenDecimals] = useState(18)
   const [chainId, setChainId] = useState('747')
+  const [lastTypedDataSignature, setLastTypedDataSignature] = useState<string | null>(null)
+  const [isValidTypedDataSignature, setIsValidTypedDataSignature] = useState<boolean | null>(null)
+  const [lastTypedDataInfo, setLastTypedDataInfo] = useState<any>(null)
 
   const { address } = useAccount()
   const { signMessageAsync } = useSignMessage()
@@ -102,7 +138,7 @@ export default function DynamicMethodPage() {
           <CardHeader>
             <CardTitle>Method Not Found</CardTitle>
             <CardDescription>
-              The method "{methodId}" was not found.
+              The method &quot;{methodId}&quot; was not found.
             </CardDescription>
           </CardHeader>
         </Card>
@@ -135,11 +171,11 @@ export default function DynamicMethodPage() {
 
       case 'personal_ecRecover':
         const recoveryMessage = customParams ? JSON.parse(customParams)[0] : customMessage
-        const signature = customParams ? JSON.parse(customParams)[1] : ''
-        if (!signature) throw new Error('Signature required for recovery')
+        const recoverySignature = customParams ? JSON.parse(customParams)[1] : ''
+        if (!recoverySignature) throw new Error('Signature required for recovery')
         return await ethereum.request({
           method: 'personal_ecRecover',
-          params: [recoveryMessage, signature]
+          params: [recoveryMessage, recoverySignature]
         })
 
       case 'eth_signTypedData':
@@ -149,10 +185,17 @@ export default function DynamicMethodPage() {
         const typedDataV1 = customParams ? JSON.parse(customParams) : [
           { type: 'string', name: 'message', value: 'Hello Flow EVM!' }
         ]
-        return await ethereum.request({
+        const v1Signature = await ethereum.request({
           method: 'eth_signTypedData',
           params: [typedDataV1, address]
         })
+
+        // Store signature for display (v1 verification is complex, so we'll show signature but not verify)
+        setLastTypedDataSignature(v1Signature)
+        setLastTypedDataInfo({ typedData: typedDataV1, address, version: 'v1' })
+        setIsValidTypedDataSignature(null) // Can't easily verify v1 signatures
+
+        return v1Signature
 
       case 'eth_sendTransaction':
         if (!recipient) throw new Error('Recipient address required')
@@ -204,14 +247,30 @@ export default function DynamicMethodPage() {
         })
 
       case 'wallet_addEthereumChain':
-        const isTestnet = parseInt(chainId) === 545
-        const chainParams = {
-          chainId: `0x${parseInt(chainId).toString(16)}`,
-          chainName: isTestnet ? 'EVM on Flow Testnet' : 'EVM on Flow',
-          nativeCurrency: { name: 'Flow', symbol: 'FLOW', decimals: 18 },
-          rpcUrls: [isTestnet ? 'https://testnet.evm.nodes.onflow.org' : 'https://mainnet.evm.nodes.onflow.org'],
-          blockExplorerUrls: [isTestnet ? 'https://evm-testnet.flowscan.io' : 'https://evm.flowscan.io']
+        const targetChainId = parseInt(chainId)
+        const targetChain = supportedChains.find(chain => chain.id === targetChainId)
+        
+        let chainParams
+        if (targetChain) {
+          // Use predefined chain configuration
+          chainParams = {
+            chainId: `0x${targetChainId.toString(16)}`,
+            chainName: targetChain.name,
+            nativeCurrency: targetChain.nativeCurrency,
+            rpcUrls: getChainRpcUrls(targetChainId),
+            blockExplorerUrls: getChainBlockExplorers(targetChainId)
+          }
+        } else {
+          // Fallback for custom chain IDs
+          chainParams = {
+            chainId: `0x${targetChainId.toString(16)}`,
+            chainName: `Chain ${targetChainId}`,
+            nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
+            rpcUrls: ['https://rpc.example.com'],
+            blockExplorerUrls: ['https://explorer.example.com']
+          }
         }
+        
         return await ethereum.request({
           method: 'wallet_addEthereumChain',
           params: [chainParams]
@@ -246,87 +305,135 @@ export default function DynamicMethodPage() {
           throw new Error('No wallet connected')
         }
         
-        // First let's try with the EXACT working example to see if that works
+        // Use the EXACT working example structure - try to replicate the working call exactly
         if (!customParams) {
-          console.log('Testing with EXACT hardcoded working example')
-          return await ethereum.request({
+          console.log('Using exact working example structure')
+
+          const typedData = {
+            types: {
+              EIP712Domain: [
+                { name: 'name', type: 'string' },
+                { name: 'version', type: 'string' },
+                { name: 'chainId', type: 'uint256' },
+                { name: 'verifyingContract', type: 'address' }
+              ],
+              Person: [
+                { name: 'name', type: 'string' },
+                { name: 'wallet', type: 'address' }
+              ],
+              Mail: [
+                { name: 'from', type: 'Person' },
+                { name: 'to', type: 'Person' },
+                { name: 'contents', type: 'string' }
+              ]
+            },
+            primaryType: 'Mail',
+            domain: {
+              name: 'Ether Mail',
+              version: '1',
+              chainId: 1,
+              verifyingContract: '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC'
+            },
+            message: {
+              from: {
+                name: 'Cow',
+                wallet: '0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826'
+              },
+              to: {
+                name: 'Bob',
+                wallet: '0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB'
+              },
+              contents: 'Hello, Bob!'
+            }
+          }
+
+          const typedDataJson = JSON.stringify(typedData)
+          console.log('Typed data JSON string:', typedDataJson)
+
+          const defaultSignature = await ethereum.request({
             method: method.method,
-            params: [
-              address.toLowerCase(),
-              {
-                types: {
-                  EIP712Domain: [
-                    {
-                      name: "name",
-                      type: "string"
-                    },
-                    {
-                      name: "version",
-                      type: "string"
-                    },
-                    {
-                      name: "chainId",
-                      type: "uint256"
-                    },
-                    {
-                      name: "verifyingContract",
-                      type: "address"
-                    }
-                  ],
-                  Person: [
-                    {
-                      name: "name",
-                      type: "string"
-                    },
-                    {
-                      name: "wallet",
-                      type: "address"
-                    }
-                  ],
-                  Mail: [
-                    {
-                      name: "from",
-                      type: "Person"
-                    },
-                    {
-                      name: "to",
-                      type: "Person"
-                    },
-                    {
-                      name: "contents",
-                      type: "string"
-                    }
-                  ]
-                },
-                primaryType: "Mail",
-                domain: {
-                  name: "Ether Mail",
-                  version: "1",
-                  chainId: 1,
-                  verifyingContract: "0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC"
-                },
-                message: {
-                  from: {
-                    name: "Cow",
-                    wallet: "0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826"
-                  },
-                  to: {
-                    name: "Bob",
-                    wallet: "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB"
-                  },
-                  contents: "Hello, Bob!"
-                }
-              }
-            ]
+            params: [address.toLowerCase(), typedDataJson]
           })
+
+          // Store signature and typed data for verification
+          setLastTypedDataSignature(defaultSignature)
+          setLastTypedDataInfo({ typedData, address })
+
+          // Verify the signature
+          try {
+            const isValid = await verifyTypedData(config, {
+              address: address as `0x${string}`,
+              domain: typedData.domain,
+              types: typedData.types,
+              primaryType: typedData.primaryType,
+              message: typedData.message,
+              signature: defaultSignature,
+            })
+            setIsValidTypedDataSignature(isValid)
+          } catch (verifyError) {
+            console.warn('Typed data signature verification failed:', verifyError)
+            setIsValidTypedDataSignature(false)
+          }
+
+          return defaultSignature
         }
         
         // If custom params provided, use them
         const parsedCustomData = JSON.parse(customParams)
-        return await ethereum.request({
+        let addressParam = address.toLowerCase()
+        let typedDataPayload = parsedCustomData
+
+        if (Array.isArray(parsedCustomData)) {
+          const [maybeAddress, maybeTypedData] = parsedCustomData
+
+          if (typeof maybeAddress === 'string') {
+            addressParam = maybeAddress.toLowerCase()
+          }
+
+          if (typeof maybeTypedData === 'undefined') {
+            throw new Error('Typed data payload missing from custom params')
+          }
+
+          typedDataPayload = maybeTypedData
+        }
+
+        const customTypedDataJson = typeof typedDataPayload === 'string'
+          ? typedDataPayload
+          : JSON.stringify(typedDataPayload)
+
+        console.log('Using custom typed data JSON string:', customTypedDataJson)
+
+        const customSignature = await ethereum.request({
           method: method.method,
-          params: [address.toLowerCase(), parsedCustomData]
+          params: [addressParam, customTypedDataJson]
         })
+
+        // Store signature and typed data for verification
+        setLastTypedDataSignature(customSignature)
+        setLastTypedDataInfo({ typedData: typedDataPayload, address: addressParam })
+
+        // Verify the signature if possible
+        try {
+          if (typeof typedDataPayload === 'object' && typedDataPayload.domain && typedDataPayload.types) {
+            const isValid = await verifyTypedData(config, {
+              address: addressParam as `0x${string}`,
+              domain: typedDataPayload.domain,
+              types: typedDataPayload.types,
+              primaryType: typedDataPayload.primaryType,
+              message: typedDataPayload.message,
+              signature: customSignature,
+            })
+            setIsValidTypedDataSignature(isValid)
+          } else {
+            // Can't verify if typed data structure is unknown
+            setIsValidTypedDataSignature(null)
+          }
+        } catch (verifyError) {
+          console.warn('Custom typed data signature verification failed:', verifyError)
+          setIsValidTypedDataSignature(false)
+        }
+
+        return customSignature
 
       default:
         // Generic fallback
@@ -458,23 +565,26 @@ export default function DynamicMethodPage() {
                 onChange={(e) => setChainId(e.target.value)}
                 placeholder="747"
               />
-              <div className="flex gap-2 mt-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setChainId('747')}
-                >
-                  Mainnet (747)
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setChainId('545')}
-                >
-                  Testnet (545)
-                </Button>
+              <div className="mt-3">
+                <Label className="text-sm font-medium">Supported Networks:</Label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 mt-2">
+                  {supportedChains.map((chain) => (
+                    <Button
+                      key={chain.id}
+                      type="button"
+                      variant={parseInt(chainId) === chain.id ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setChainId(chain.id.toString())}
+                      className="text-xs h-auto p-2 flex flex-col items-start"
+                    >
+                      <div className="font-medium">{chain.name}</div>
+                      <div className="text-xs opacity-70">
+                        ID: {chain.id} • {chain.nativeCurrency.symbol}
+                        {chain.testnet && <span className="ml-1 text-orange-500">TEST</span>}
+                      </div>
+                    </Button>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
@@ -588,6 +698,49 @@ export default function DynamicMethodPage() {
                   {currentChainId}
                 </Badge>
               </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Signature Validation Card for signTypedData methods */}
+        {(method.id.includes('signTypedData') || method.id === 'eth_sign' || method.id === 'personal_sign') && lastTypedDataSignature && (
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base">Signature Validation</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">Signature Status:</span>
+                {isValidTypedDataSignature === null ? (
+                  <Badge variant="outline">
+                    {lastTypedDataInfo?.version === 'v1' ? 'Not Verifiable (v1)' : 'Verifying...'}
+                  </Badge>
+                ) : isValidTypedDataSignature ? (
+                  <Badge variant="default" className="bg-green-600 hover:bg-green-700">
+                    ✓ Valid
+                  </Badge>
+                ) : (
+                  <Badge variant="destructive">
+                    ✗ Invalid
+                  </Badge>
+                )}
+              </div>
+              
+              <div>
+                <div className="text-sm font-medium mb-1">Last Signature</div>
+                <div className="text-xs font-mono bg-muted p-2 rounded break-all">
+                  {lastTypedDataSignature}
+                </div>
+              </div>
+
+              {lastTypedDataInfo?.address && (
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">Signer:</span>
+                  <Badge variant="outline" className="font-mono text-xs">
+                    {lastTypedDataInfo.address.slice(0, 8)}...{lastTypedDataInfo.address.slice(-6)}
+                  </Badge>
+                </div>
+              )}
             </CardContent>
           </Card>
         )}

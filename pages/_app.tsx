@@ -11,6 +11,8 @@ import {
   optimism,
   polygon,
   sepolia,
+  baseSepolia,
+  avalanche,
 } from 'wagmi/chains';
 import { getDefaultConfig, RainbowKitProvider, connectorsForWallets, darkTheme } from '@rainbow-me/rainbowkit';
 import {NextUIProvider} from "@nextui-org/react";

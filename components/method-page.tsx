@@ -59,6 +59,24 @@ export function MethodPage({ method, children, onExecute, defaultParams, customI
     navigator.clipboard.writeText(text)
   }
 
+  const safeStringify = (obj: any, space?: number) => {
+    return JSON.stringify(obj, (key, value) => {
+      // Handle BigInt
+      if (typeof value === 'bigint') {
+        return value.toString()
+      }
+      // Handle other potential issues
+      if (value instanceof Error) {
+        return {
+          name: value.name,
+          message: value.message,
+          stack: value.stack
+        }
+      }
+      return value
+    }, space)
+  }
+
   return (
     <MainLayout title={method.name}>
       <div className="space-y-6">
@@ -110,7 +128,8 @@ export function MethodPage({ method, children, onExecute, defaultParams, customI
                     {!method.id.includes('signTypedData') && !method.id.includes('personal_sign') && !method.id.includes('eth_sign') && <Separator />}
                   </>
                 )}
-                {!customInputs || (!method.id.includes('signTypedData') && !method.id.includes('personal_sign') && !method.id.includes('eth_sign')) ? (
+                {/* Only show JSON params for methods without custom inputs OR methods that need additional JSON config */}
+                {!customInputs ? (
                   <div>
                     <Label htmlFor="params">JSON Parameters</Label>
                     <Textarea
@@ -158,7 +177,7 @@ export function MethodPage({ method, children, onExecute, defaultParams, customI
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => copyToClipboard(JSON.stringify(result, null, 2))}
+                      onClick={() => copyToClipboard(safeStringify(result, 2))}
                     >
                       <Copy className="w-4 h-4" />
                     </Button>
@@ -182,7 +201,7 @@ export function MethodPage({ method, children, onExecute, defaultParams, customI
                 {result && (
                   <div className="bg-muted/50 rounded-md p-4">
                     <pre className="text-sm font-mono whitespace-pre-wrap break-all">
-                      {JSON.stringify(result, null, 2)}
+                      {safeStringify(result, 2)}
                     </pre>
                   </div>
                 )}
@@ -214,7 +233,7 @@ export function MethodPage({ method, children, onExecute, defaultParams, customI
                   <div className="text-sm font-medium">Wallet Support</div>
                   <div className="flex gap-2 mt-1">
                     {method.walletTypes.map(type => (
-                      <Badge key={type} variant="outline" size="sm">
+                      <Badge key={type} variant="outline" className="text-xs">
                         {type}
                       </Badge>
                     ))}

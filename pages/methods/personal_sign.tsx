@@ -139,18 +139,25 @@ export default function PersonalSignPage() {
             </div>
 
             {lastSignature && (
-              <div>
-                <div className="text-sm font-medium">Last Signature Valid</div>
-                <div className="mt-1">
+              <>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">Signature Status:</span>
                   {isValidSignature === null ? (
                     <Badge variant="outline">Verifying...</Badge>
                   ) : isValidSignature ? (
-                    <Badge variant="default">✓ Valid</Badge>
+                    <Badge variant="default" className="bg-green-600 hover:bg-green-700">✓ Valid</Badge>
                   ) : (
                     <Badge variant="destructive">✗ Invalid</Badge>
                   )}
                 </div>
-              </div>
+                
+                <div>
+                  <div className="text-sm font-medium mb-1">Last Signature</div>
+                  <div className="text-xs font-mono bg-muted p-2 rounded break-all">
+                    {lastSignature}
+                  </div>
+                </div>
+              </>
             )}
 
             {address && (

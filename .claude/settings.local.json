@@ -20,7 +20,8 @@
       "Bash(bunx tailwindcss:*)",
       "mcp__chrome-devtools__click",
       "WebFetch(domain:docs.metamask.io)",
-      "WebSearch"
+      "WebSearch",
+      "mcp__chrome-devtools__new_page"
     ],
     "deny": [],
     "ask": []
