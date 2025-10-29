@@ -33,6 +33,8 @@ export class EIP6963Manager {
   }
 
   private init() {
+    if (typeof window === 'undefined') return
+    
     // Listen for wallet announcements
     window.addEventListener("eip6963:announceProvider", this.handleAnnouncement.bind(this))
     

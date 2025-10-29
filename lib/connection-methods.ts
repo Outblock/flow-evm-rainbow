@@ -1,7 +1,8 @@
 import { ethers } from 'ethers'
 import Web3 from 'web3'
 import { createWalletClient, custom, http } from 'viem'
-import { eip6963Manager } from './eip6963'
+// Import EIP6963Manager class instead of instance to avoid SSR issues
+let eip6963Manager: any = null
 
 export type ConnectionMethod = 'rainbowkit' | 'window.ethereum' | 'window.frw' | 'window.metamask' | 'ethers' | 'web3' | 'viem' | 'wagmi' | 'eip6963'
 
@@ -229,6 +230,11 @@ export class ConnectionManager {
   }
 
   private async connectEIP6963(): Promise<string[]> {
+    if (!eip6963Manager) {
+      const { eip6963Manager: manager } = await import('./eip6963')
+      eip6963Manager = manager
+    }
+    
     const providers = eip6963Manager.getProviders()
     if (providers.length === 0) {
       throw new Error('No EIP-6963 providers found. Please install a compatible wallet.')

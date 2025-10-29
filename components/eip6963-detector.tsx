@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Separator } from '@/components/ui/separator'
 import { Wallet, RefreshCw, Check, AlertCircle } from 'lucide-react'
-import { eip6963Manager, EIP6963ProviderDetail } from '@/lib/eip6963'
+import { EIP6963ProviderDetail } from '@/lib/eip6963'
 
 export function EIP6963Detector() {
   const [providers, setProviders] = useState<EIP6963ProviderDetail[]>([])
@@ -17,11 +17,22 @@ export function EIP6963Detector() {
   const [connectedAccounts, setConnectedAccounts] = useState<string[]>([])
 
   useEffect(() => {
-    const unsubscribe = eip6963Manager.onProvidersChange((newProviders) => {
-      setProviders(newProviders)
-    })
+    let unsubscribe: (() => void) | null = null
+    
+    const initEIP6963 = async () => {
+      if (typeof window !== 'undefined') {
+        const { eip6963Manager } = await import('@/lib/eip6963')
+        unsubscribe = eip6963Manager.onProvidersChange((newProviders) => {
+          setProviders(newProviders)
+        })
+      }
+    }
+    
+    initEIP6963()
 
-    return unsubscribe
+    return () => {
+      if (unsubscribe) unsubscribe()
+    }
   }, [])
 
   const handleConnect = async (uuid: string) => {
@@ -29,6 +40,7 @@ export function EIP6963Detector() {
     setError(null)
 
     try {
+      const { eip6963Manager } = await import('@/lib/eip6963')
       const accounts = await eip6963Manager.connectToProvider(uuid)
       setConnectedProvider(uuid)
       setConnectedAccounts(accounts)
@@ -41,7 +53,9 @@ export function EIP6963Detector() {
 
   const handleRefresh = () => {
     // Force re-request providers
-    window.dispatchEvent(new CustomEvent("eip6963:requestProvider"))
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent("eip6963:requestProvider"))
+    }
   }
 
   const handleDisconnect = () => {
