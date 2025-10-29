@@ -1,8 +1,9 @@
 import { ethers } from 'ethers'
 import Web3 from 'web3'
 import { createWalletClient, custom, http } from 'viem'
+import { eip6963Manager } from './eip6963'
 
-export type ConnectionMethod = 'rainbowkit' | 'window.ethereum' | 'window.frw' | 'window.metamask' | 'ethers' | 'web3' | 'viem' | 'wagmi'
+export type ConnectionMethod = 'rainbowkit' | 'window.ethereum' | 'window.frw' | 'window.metamask' | 'ethers' | 'web3' | 'viem' | 'wagmi' | 'eip6963'
 
 export interface ConnectionMethodInfo {
   id: ConnectionMethod
@@ -68,6 +69,13 @@ export const CONNECTION_METHODS: ConnectionMethodInfo[] = [
     description: 'React hooks for Ethereum',
     icon: '🪝',
     available: typeof window !== 'undefined' && !!window.ethereum
+  },
+  {
+    id: 'eip6963',
+    name: 'EIP-6963',
+    description: 'Auto-discovery of multiple wallet providers',
+    icon: '🔍',
+    available: typeof window !== 'undefined'
   }
 ]
 
@@ -116,6 +124,8 @@ export class ConnectionManager {
           return await this.connectViem()
         case 'wagmi':
           return await this.connectWagmi()
+        case 'eip6963':
+          return await this.connectEIP6963()
         default:
           throw new Error(`Connection method ${method} not implemented in direct connection`)
       }
@@ -218,6 +228,22 @@ export class ConnectionManager {
     throw new Error('Wagmi connection should be handled through wagmi hooks')
   }
 
+  private async connectEIP6963(): Promise<string[]> {
+    const providers = eip6963Manager.getProviders()
+    if (providers.length === 0) {
+      throw new Error('No EIP-6963 providers found. Please install a compatible wallet.')
+    }
+
+    // Connect to the first available provider for simplicity
+    // In a real implementation, you might want to let the user choose
+    const firstProvider = providers[0]
+    const accounts = await eip6963Manager.connectToProvider(firstProvider.info.uuid)
+    
+    this.provider = firstProvider.provider
+    this.connectedAccount = accounts[0]
+    return accounts
+  }
+
   async executeRPCMethod(method: string, params: any[] = []): Promise<any> {
     if (!this.provider) {
       throw new Error('No provider connected')
@@ -227,6 +253,7 @@ export class ConnectionManager {
       case 'window.ethereum':
       case 'window.frw':
       case 'window.metamask':
+      case 'eip6963':
         return await this.provider.request({ method, params })
         
       case 'ethers':

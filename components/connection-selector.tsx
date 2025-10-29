@@ -23,7 +23,7 @@ interface ConnectionSelectorProps {
 }
 
 export function ConnectionSelector({ onMethodChange }: ConnectionSelectorProps) {
-  const [selectedMethod, setSelectedMethod] = useState<ConnectionMethod>('rainbowkit')
+  const [selectedMethod, setSelectedMethod] = useState<ConnectionMethod>(connectionManager.getCurrentMethod())
   const [connectedAccounts, setConnectedAccounts] = useState<string[]>([])
   const [isConnecting, setIsConnecting] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -41,6 +41,7 @@ export function ConnectionSelector({ onMethodChange }: ConnectionSelectorProps) 
           method.id === 'window.ethereum' ? !!(window as any).ethereum :
           method.id === 'window.frw' ? !!(window as any).frw :
           method.id === 'window.metamask' ? !!(window as any).metamask :
+          method.id === 'eip6963' ? true : // EIP-6963 is always available in browser
           ['ethers', 'web3', 'viem', 'wagmi'].includes(method.id) ? !!(window as any).ethereum :
           false
       }))
@@ -52,6 +53,16 @@ export function ConnectionSelector({ onMethodChange }: ConnectionSelectorProps) 
     // Listen for wallet installations
     const interval = setInterval(updateAvailability, 1000)
     return () => clearInterval(interval)
+  }, [])
+
+  // Listen for external connection method changes
+  useEffect(() => {
+    const handleConnectionMethodChange = (event: CustomEvent) => {
+      setSelectedMethod(event.detail)
+    }
+
+    window.addEventListener('connectionMethodChanged', handleConnectionMethodChange as EventListener)
+    return () => window.removeEventListener('connectionMethodChanged', handleConnectionMethodChange as EventListener)
   }, [])
 
   const handleMethodChange = (method: ConnectionMethod) => {

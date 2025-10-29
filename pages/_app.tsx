@@ -51,9 +51,9 @@ function MyApp({ Component, pageProps }: AppProps) {
       <WagmiProvider config={config}>
         <QueryClientProvider client={client}>
           <RainbowKitProvider theme={darkTheme()}>
-              <main className="dark text-foreground bg-background">
-                <Component {...pageProps} />
-              </main>
+            <main className="dark text-foreground bg-background min-h-screen">
+              <Component {...pageProps} />
+            </main>
           </RainbowKitProvider>
         </QueryClientProvider>
       </WagmiProvider>

@@ -10,6 +10,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Smartphone } from 'lucide-react'
 import { useIsMobile, useIsWalletWebView } from '@/hooks/use-mobile'
 import { ConnectionSelector } from '@/components/connection-selector'
+import { EIP6963Detector } from '@/components/eip6963-detector'
 
 const Home: NextPage = () => {
   const isMobile = useIsMobile()
@@ -59,6 +60,9 @@ const Home: NextPage = () => {
 
           {/* Connection Method Selector */}
           <ConnectionSelector />
+
+          {/* EIP-6963 Wallet Detection */}
+          <EIP6963Detector />
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {Object.entries(CATEGORIES).map(([key, category]) => {
