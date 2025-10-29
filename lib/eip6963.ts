@@ -36,7 +36,7 @@ export class EIP6963Manager {
     if (typeof window === 'undefined') return
     
     // Listen for wallet announcements
-    window.addEventListener("eip6963:announceProvider", this.handleAnnouncement.bind(this))
+    window.addEventListener("eip6963:announceProvider" as any, this.handleAnnouncement.bind(this))
     
     // Request wallets to announce themselves
     this.requestProviders()
@@ -45,8 +45,9 @@ export class EIP6963Manager {
     setInterval(() => this.requestProviders(), 1000)
   }
 
-  private handleAnnouncement(event: EIP6963AnnounceProviderEvent) {
-    const { detail } = event
+  private handleAnnouncement(event: Event) {
+    const customEvent = event as EIP6963AnnounceProviderEvent
+    const { detail } = customEvent
     
     // Store the provider
     this.providers.set(detail.info.uuid, detail)
@@ -108,5 +109,20 @@ export class EIP6963Manager {
   }
 }
 
-// Global instance
-export const eip6963Manager = new EIP6963Manager()
+// Global instance - only create in browser environment
+let _eip6963Manager: EIP6963Manager | null = null
+
+export const getEIP6963Manager = (): EIP6963Manager => {
+  if (typeof window === 'undefined') {
+    throw new Error('EIP6963Manager can only be used in browser environment')
+  }
+  
+  if (!_eip6963Manager) {
+    _eip6963Manager = new EIP6963Manager()
+  }
+  
+  return _eip6963Manager
+}
+
+// For backwards compatibility
+export const eip6963Manager = typeof window !== 'undefined' ? getEIP6963Manager() : null

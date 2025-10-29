@@ -21,7 +21,8 @@ export function EIP6963Detector() {
     
     const initEIP6963 = async () => {
       if (typeof window !== 'undefined') {
-        const { eip6963Manager } = await import('@/lib/eip6963')
+        const { getEIP6963Manager } = await import('@/lib/eip6963')
+        const eip6963Manager = getEIP6963Manager()
         unsubscribe = eip6963Manager.onProvidersChange((newProviders) => {
           setProviders(newProviders)
         })
@@ -40,7 +41,8 @@ export function EIP6963Detector() {
     setError(null)
 
     try {
-      const { eip6963Manager } = await import('@/lib/eip6963')
+      const { getEIP6963Manager } = await import('@/lib/eip6963')
+      const eip6963Manager = getEIP6963Manager()
       const accounts = await eip6963Manager.connectToProvider(uuid)
       setConnectedProvider(uuid)
       setConnectedAccounts(accounts)
